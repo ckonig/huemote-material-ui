@@ -1,6 +1,9 @@
 import "./App.css";
 import "./battery.scss";
 import "./react-toggle.css";
+import "react-tabs/style/react-tabs.css";
+
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 
 import React from "react";
 import Toggle from "react-toggle";
@@ -53,12 +56,35 @@ const fetchSensors = (setData: (d: any) => void) => {
   myFetch(`${baseUrl}/sensors`).then((d) => setData(d));
 };
 
+const roomToFa = (room: string) => {
+  switch (room) {
+    case "Living room":
+      return "fa-tv";
+    case "Bathroom":
+      return "fa-toilet-paper";
+    case "Bedroom":
+      return "fa-bed";
+    case "Balcony":
+      return "fa-tree";
+    case "Plants":
+      return "fa-seedling";
+    case "Kitchen":
+      return "fa-coffee";
+    case "Entrance":
+      return "fa-shoe-prints";
+    case "Office":
+      return "fa-laptop-house";
+  }
+  console.error("no icon for room:" + room);
+};
+
 const Room = (props: {
   id: string;
   model: GroupsResponseObj;
   lights: RawLightsResponse;
   refresh: () => void;
 }) => {
+  const [expanded, setExpanded] = React.useState(false);
   const toggle = React.useCallback(() => {
     const payload = { on: false };
     if (props.model.state.any_on) {
@@ -101,20 +127,26 @@ const Room = (props: {
   };
 
   return (
-    <div
+    <button
+      className="myButton"
+      onClick={(e: any) =>
+        (!e.target.className ||
+          e.target.className.substring(0, 12) !== "react-toggle") &&
+        setExpanded(!expanded)
+      }
       style={{
-        borderRadius: '0.25em',
+        borderRadius: "0.25em",
         fontSize: "1.5em",
         float: "left",
         width: 250,
-        height: 45,
+        minHeight: expanded ? 143 : 45,
         margin: 2,
         borderWidth: 2,
         borderStyle: "solid",
         position: "relative",
       }}
     >
-      <div style={{ position: "absolute", left: 10, top: 5 }}>
+      <div style={{ position: "absolute", left: 10, top: 7.5 }}>
         <i
           style={{ fontSize: "1em", width: 30 }}
           className={`fa ${hueToFa(props.model.class)}`}
@@ -128,7 +160,8 @@ const Room = (props: {
           onChange={() => toggle()}
         />
       </div>
-    </div>
+      {expanded && <div style={{ top: 50 }}>@todo scenes</div>}
+    </button>
   );
 };
 
@@ -166,7 +199,14 @@ const groupSensorsById = (sensors: any) => {
 const Thermometer = (props: { temp: string }) => {
   return (
     <div
-      style={{ fontSize: "2em", position: "absolute", bottom: 10, left: 10 }}
+      style={{
+        fontSize: "2em",
+        position: "absolute",
+        bottom: 10,
+        left: 0,
+        right: 0,
+        textAlign: "center",
+      }}
       className="thermometer"
     >
       {props.temp}°C
@@ -178,6 +218,7 @@ function App() {
   const [lights, setLights] = React.useState<RawLightsResponse>({});
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
   const [sensors, setSensors] = React.useState<any>({});
+  const [tab, setTab] = React.useState(0);
   React.useEffect(() => {
     fetchLights(setLights);
     fetchGroups(setGroups);
@@ -186,65 +227,103 @@ function App() {
   React.useEffect(() => {
     console.log(lights);
   }, [lights]);
+  const tabs = [
+    { icon: "fa-home", label: "Rooms" },
+    { icon: "fa-thermometer-half", label: "Sensors" },
+  ];
   return (
-    <div>
-      <h1>Lightswitch App</h1>
-      <h2>Sensors</h2>
-      <div>
-        {Object.keys(sensors)
-          .map((key) => sensors[key])
-          .map((sensor) => (
-            <div
-              style={{
-                fontSize: '1em',
-                borderRadius: '0.25em',
-                position: "relative",
-                borderStyle: "solid",
-                borderWidth: 2,
-                margin: 2,
-                float: "left",
-                width: 250,
-                height: 80,
-              }}
-            >
-              <div style={{ position: "absolute", left: 10, top: 10 }}>
-                {sensor.name}
-              </div>
-
-              <div
-                className="battery"
-                style={{
-                  position: "absolute",
-                  right: 10,
-                  top: 8,
-                }}
-              >
-                <div
-                  className="battery-level"
-                  style={{ height: sensor.presence.config.battery + "%" }}
-                ></div>
-              </div>
-              <Thermometer
-                temp={`${Math.round(
-                  sensor.temperature.state.temperature / 100
-                ).toFixed(2)}`}
-              />
-            </div>
+    <div style={{ maxWidth: 518 }}>
+      <h1 style={{ textAlign: "center" }}>
+        <i className={"fa " + tabs[tab].icon} />
+      </h1>
+      <Tabs onSelect={(i: number) => setTab(i)}>
+        <TabList>
+          {tabs.map((tab) => (
+            <Tab>
+              <i className={"fa " + tab.icon} />
+              &nbsp; {tab.label}
+            </Tab>
           ))}
-      </div>
-      <div style={{ clear: "both" }}></div>
-      <h2>Rooms</h2>
-      {Object.keys(groups)
-        .map((key) => ({ key: key, ...groups[parseInt(key)] }))
-        .map((elem, id) => (
-          <Room
-            id={elem.key}
-            key={id}
-            model={elem}
-            lights={lights}
-            refresh={() => fetchGroups(setGroups)}
-          />
-        ))}
+        </TabList>
+        <TabPanel>
+          {Object.keys(groups)
+            .map((key) => ({ key: key, ...groups[parseInt(key)] }))
+            .map((elem, id) => (
+              <Room
+                id={elem.key}
+                key={id}
+                model={elem}
+                lights={lights}
+                refresh={() => fetchGroups(setGroups)}
+              />
+            ))}
+        </TabPanel>
+
+        <TabPanel>
+          <div>
+            {Object.keys(sensors)
+              .map((key) => sensors[key])
+              .map((sensor) => (
+                <div
+                  style={{
+                    fontSize: "1em",
+                    borderRadius: "0.25em",
+                    position: "relative",
+                    borderStyle: "solid",
+                    borderWidth: 2,
+                    margin: 2,
+                    float: "left",
+                    width: 250,
+                    height: 80,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "2em",
+                      position: "absolute",
+                      left: 10,
+                      top: 18,
+                    }}
+                  >
+                    <i
+                      className={"fa " + roomToFa(sensor.name.split(" ")[0])}
+                    ></i>
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      right: 0,
+                      textAlign: "center",
+                      top: 10,
+                    }}
+                  >
+                    {sensor.name.split(" ")[0]}
+                  </div>
+
+                  <div
+                    className="battery"
+                    style={{
+                      position: "absolute",
+                      right: 10,
+                      top: 8,
+                    }}
+                  >
+                    <div
+                      className="battery-level"
+                      style={{ height: sensor.presence.config.battery + "%" }}
+                    ></div>
+                  </div>
+                  <Thermometer
+                    temp={`${Math.round(
+                      sensor.temperature.state.temperature / 100
+                    ).toFixed(2)}`}
+                  />
+                </div>
+              ))}
+          </div>
+        </TabPanel>
+      </Tabs>
     </div>
   );
 }
