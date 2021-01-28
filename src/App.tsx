@@ -1,6 +1,9 @@
 import "./App.css";
+import "./battery.scss";
+import "./react-toggle.css";
 
 import React from "react";
+import Toggle from "react-toggle";
 
 interface LightsReponseObj {
   capabilities: any;
@@ -76,10 +79,27 @@ const Room = (props: {
   }
 
   return (
-    <div>
-      <button onClick={() => toggle()}>
-        {props.model.name}: toggle {props.model.state.any_on ? "off" : "on"}
-      </button>
+    <div
+      style={{
+        float: "left",
+        width: "170px",
+        height: "45px",
+        margin: 2,
+        borderWidth: "2px",
+        borderStyle: "solid",
+        position: "relative",
+      }}
+    >
+      <div style={{ position: "absolute", left: 10, top: 10 }}>
+        <span>{props.model.name}</span>
+      </div>
+      <div style={{ position: "absolute", right: 10, top: 10 }}>
+        <Toggle
+          icons={false}
+          defaultChecked={props.model.state.any_on}
+          onChange={() => toggle()}
+        />
+      </div>
     </div>
   );
 };
@@ -137,7 +157,13 @@ function App() {
           .map((sensor) => (
             <li>
               {sensor.name} {sensor.temperature.state.temperature / 100}°C
-              Battery:{sensor.presence.config.battery}%
+              <div className="battery">
+                <div
+                  className="battery-level"
+                  style={{ height: sensor.presence.config.battery + "%" }}
+                ></div>
+              </div>
+              <span>{sensor.presence.config.battery}%</span>
             </li>
           ))}
       </ul>
