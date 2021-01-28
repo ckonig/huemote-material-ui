@@ -78,20 +78,48 @@ const Room = (props: {
     return null;
   }
 
+  const hueToFa = (hue: string) => {
+    switch (hue) {
+      case "Living room":
+        return "fa-tv";
+      case "Bathroom":
+        return "fa-toilet-paper";
+      case "Bedroom":
+        return "fa-bed";
+      case "Balcony":
+        return "fa-tree";
+      case "Garden":
+        return "fa-seedling";
+      case "Kitchen":
+        return "fa-coffee";
+      case "Front door":
+        return "fa-shoe-prints";
+      case "Reading":
+        return "fa-laptop-house";
+    }
+    console.error("no icon for class:" + hue);
+  };
+
   return (
     <div
       style={{
+        borderRadius: '0.25em',
+        fontSize: "1.5em",
         float: "left",
-        width: "170px",
-        height: "45px",
+        width: 250,
+        height: 45,
         margin: 2,
-        borderWidth: "2px",
+        borderWidth: 2,
         borderStyle: "solid",
         position: "relative",
       }}
     >
-      <div style={{ position: "absolute", left: 10, top: 10 }}>
-        <span>{props.model.name}</span>
+      <div style={{ position: "absolute", left: 10, top: 5 }}>
+        <i
+          style={{ fontSize: "1em", width: 30 }}
+          className={`fa ${hueToFa(props.model.class)}`}
+        ></i>
+        <span style={{ marginLeft: 10 }}>{props.model.name}</span>
       </div>
       <div style={{ position: "absolute", right: 10, top: 10 }}>
         <Toggle
@@ -135,6 +163,17 @@ const groupSensorsById = (sensors: any) => {
   return dict;
 };
 
+const Thermometer = (props: { temp: string }) => {
+  return (
+    <div
+      style={{ fontSize: "2em", position: "absolute", bottom: 10, left: 10 }}
+      className="thermometer"
+    >
+      {props.temp}°C
+    </div>
+  );
+};
+
 function App() {
   const [lights, setLights] = React.useState<RawLightsResponse>({});
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
@@ -149,25 +188,52 @@ function App() {
   }, [lights]);
   return (
     <div>
-      <h1>Hue React</h1>
+      <h1>Lightswitch App</h1>
       <h2>Sensors</h2>
-      <ul>
+      <div>
         {Object.keys(sensors)
           .map((key) => sensors[key])
           .map((sensor) => (
-            <li>
-              {sensor.name} {sensor.temperature.state.temperature / 100}°C
-              <div className="battery">
+            <div
+              style={{
+                fontSize: '1em',
+                borderRadius: '0.25em',
+                position: "relative",
+                borderStyle: "solid",
+                borderWidth: 2,
+                margin: 2,
+                float: "left",
+                width: 250,
+                height: 80,
+              }}
+            >
+              <div style={{ position: "absolute", left: 10, top: 10 }}>
+                {sensor.name}
+              </div>
+
+              <div
+                className="battery"
+                style={{
+                  position: "absolute",
+                  right: 10,
+                  top: 8,
+                }}
+              >
                 <div
                   className="battery-level"
                   style={{ height: sensor.presence.config.battery + "%" }}
                 ></div>
               </div>
-              <span>{sensor.presence.config.battery}%</span>
-            </li>
+              <Thermometer
+                temp={`${Math.round(
+                  sensor.temperature.state.temperature / 100
+                ).toFixed(2)}`}
+              />
+            </div>
           ))}
-      </ul>
-      <h2>Insta Switch</h2>
+      </div>
+      <div style={{ clear: "both" }}></div>
+      <h2>Rooms</h2>
       {Object.keys(groups)
         .map((key) => ({ key: key, ...groups[parseInt(key)] }))
         .map((elem, id) => (

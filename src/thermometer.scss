@@ -1,0 +1,165 @@
+@mixin center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+.thermo {
+  box-sizing: border-box;
+  font-family: "Courier Prime", monospace;
+  .container {
+    width: 200px;
+    height: 200px;
+
+    overflow: hidden;
+
+    @include center;
+
+    .outer-circle {
+      width: 200px;
+      height: 200px;
+      background-color: #f1f1f1;
+
+      border-radius: 50%;
+      cursor: pointer;
+
+      @include center;
+      .middle-circle {
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        border-bottom: 20px solid #f1f1f1;
+        border-top: 20px solid transparent;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+
+        background: url("http://100dayscss.com/codepen/thermostat-gradient.jpg");
+        background-repeat: no-repeat;
+        background-size: 180px 180px;
+        background-position: center center;
+        @include center;
+
+        .inner-circle {
+          position: absolute;
+          width: 143px;
+          height: 143px;
+          background-color: #fff;
+
+          border-radius: 50%;
+
+          @include center;
+          flex-direction: column;
+
+          span {
+            position: relative;
+          }
+
+          .top {
+            font-size: 13px;
+            color: #5a2962;
+
+            &::after {
+              content: "°";
+              position: absolute;
+              top: -1px;
+              right: -7px;
+            }
+          }
+
+          .mid {
+            margin: 5px 0;
+            font-size: 60px;
+            transition: 0.4s;
+
+            color: #5a2962;
+            backface-visibility: hidden;
+
+            &::after {
+              content: "°";
+              position: absolute;
+              font-size: 25px;
+              top: 8px;
+              right: -9px;
+            }
+          }
+
+          .bottom {
+            font-size: 15px;
+            color: #5a2962;
+          }
+
+          .on-hover {
+            position: absolute;
+            font-size: 60px;
+            transform: scale(0.3);
+            right: -20px;
+            opacity: 0;
+
+            transition: 0.4s;
+            color: #98317a;
+
+            &::after {
+              content: "°";
+              position: absolute;
+              font-size: 25px;
+              top: 8px;
+              right: -9px;
+            }
+          }
+          .line {
+            position: relative;
+
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 50%;
+
+            position: absolute;
+            left: 0;
+            top: 0;
+
+            overflow: hidden;
+
+            transition: 0.4s;
+
+            transform: rotate(-20deg);
+
+            &::after {
+              content: "";
+              width: 15px;
+              height: 2px;
+              background-color: rgba(#98317a, 0.6);
+              display: block;
+              position: absolute;
+              left: 20px;
+              top: 20px;
+              transform: rotate(45deg);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.mid-mouse-on {
+  transform: translateX(-50px) scale(0.3);
+  opacity: 0;
+}
+
+.on-hover-mouse-on {
+  transform: scale(1) translateX(-55px) !important;
+  opacity: 1 !important;
+}
+
+.line-rotate {
+  transform: rotate(30deg) !important;
+}
