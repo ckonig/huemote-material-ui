@@ -49,6 +49,9 @@ const myFetch = (url: string) =>
 const fetchLights = (setData: (d: RawLightsResponse) => void) => {
   myFetch(`${baseUrl}/lights`).then((d) => setData(d));
 };
+const fetchScenes = (setData: (d: any) => void) => {
+  myFetch(`${baseUrl}/scenes`).then((d) => setData(d));
+};
 const fetchGroups = (setData: (d: RawGroupsResponse) => void) => {
   myFetch(`${baseUrl}/groups`).then((d) => setData(d));
 };
@@ -82,18 +85,13 @@ const Room = (props: {
   id: string;
   model: GroupsResponseObj;
   lights: RawLightsResponse;
+  scenes: any;
   refresh: () => void;
 }) => {
   const [expanded, setExpanded] = React.useState(false);
   const toggle = React.useCallback(() => {
-    const payload = { on: false };
-    if (props.model.state.any_on) {
-      console.log("toggle off");
-      payload.on = false;
-    } else {
-      console.log("toggle on");
-      payload.on = true;
-    }
+    const payload = { on: !props.model.state.any_on };
+
     fetch(`${baseUrl}/groups/${props.id}/action`, {
       method: "put",
       body: JSON.stringify(payload),
@@ -124,6 +122,22 @@ const Room = (props: {
         return "fa-laptop-house";
     }
     console.error("no icon for class:" + hue);
+  };
+
+  const getScenes = () => {
+    return Object.keys(props.scenes)
+      .map((key) => ({
+        key,
+        ...props.scenes[key],
+      }))
+      .filter(
+        (scene) =>
+          scene.group &&
+          scene.group === props.id &&
+          scene.type === "GroupScene" &&
+          !scene.recycle &&
+          scene.locked
+      );
   };
 
   return (
@@ -160,7 +174,15 @@ const Room = (props: {
           onChange={() => toggle()}
         />
       </div>
-      {expanded && <div style={{ top: 50 }}>@todo scenes</div>}
+      {expanded && (
+        <div style={{ position: "absolute", top: 25 }}>
+          <ul>
+            {getScenes().map((scene) => (
+              <li>{scene.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </button>
   );
 };
@@ -218,15 +240,17 @@ function App() {
   const [lights, setLights] = React.useState<RawLightsResponse>({});
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
   const [sensors, setSensors] = React.useState<any>({});
+  const [scenes, setScenes] = React.useState<any>({});
   const [tab, setTab] = React.useState(0);
   React.useEffect(() => {
     fetchLights(setLights);
+    fetchScenes(setScenes);
     fetchGroups(setGroups);
     fetchSensors((s) => setSensors(groupSensorsById(s)));
   }, []);
   React.useEffect(() => {
-    console.log(lights);
-  }, [lights]);
+    console.log(scenes);
+  }, [scenes]);
   const tabs = [
     { icon: "fa-home", label: "Rooms" },
     { icon: "fa-thermometer-half", label: "Sensors" },
@@ -254,6 +278,7 @@ function App() {
                 key={id}
                 model={elem}
                 lights={lights}
+                scenes={scenes}
                 refresh={() => fetchGroups(setGroups)}
               />
             ))}
