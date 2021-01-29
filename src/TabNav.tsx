@@ -11,7 +11,7 @@ import { useHueContext } from "./HueContext";
 
 function TabNav() {
   const {
-    state: { lights, groups, sensors, scenes },
+    state: { lights, groups, sensors, scenes, baseUrl },
     refresh,
   } = useHueContext();
 
@@ -48,7 +48,7 @@ function TabNav() {
             height: 50,
             fontSize: "2em",
           }}
-          onClick={() => shutDown().then(refresh)}
+          onClick={() => baseUrl && shutDown(baseUrl).then(refresh)}
         >
           <Icon className={"fa fa-power-off"} />
         </IconButton>

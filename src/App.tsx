@@ -1,13 +1,23 @@
 import { CssBaseline, ThemeProvider, createMuiTheme } from "@material-ui/core";
-import { HueContext, refresh, useDefaultHueState } from "./HueContext";
+import {
+  HueContext,
+  initialize,
+  refresh,
+  useDefaultHueState,
+} from "./HueContext";
 
+import ConfirmationDialog from "./ConfirmationDialog";
 import React from "react";
 import TabNav from "./TabNav";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 function App() {
   const hueState = useDefaultHueState();
-  const hueContext = { state: hueState, refresh: () => refresh(hueState) };
+  const hueContext = {
+    state: hueState,
+    refresh: () => refresh(hueState),
+    initialize: (baseUrl: string) => initialize(hueState, baseUrl),
+  };
   React.useEffect(() => hueContext.refresh(), []);
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -26,6 +36,7 @@ function App() {
       <CssBaseline />
       <HueContext.Provider value={hueContext}>
         <TabNav />
+        <ConfirmationDialog open={true} />
       </HueContext.Provider>
     </ThemeProvider>
   );

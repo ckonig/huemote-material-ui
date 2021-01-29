@@ -14,7 +14,7 @@ import Accordion from "./Accordion";
 import AccordionSummary from "./AccordionSummary";
 import { RawGroupsResponse } from "./Common";
 import React from "react";
-import { baseUrl } from "./API";
+import { useHueContext } from "./HueContext";
 
 const getScenes = (scenes: any, id: string) => {
   return Object.keys(scenes)
@@ -29,16 +29,6 @@ const getScenes = (scenes: any, id: string) => {
         scene.type === "GroupScene" &&
         !scene.recycle
     );
-};
-
-//@todo move to api
-const activateScene = (scene: any, id: string, refresh: () => void) => {
-  const payload = { scene: scene.key };
-
-  fetch(`${baseUrl}/groups/${id}/action`, {
-    method: "put",
-    body: JSON.stringify(payload),
-  }).then(() => refresh());
 };
 
 //@todo move mapping to config, based on group names only
@@ -73,6 +63,19 @@ const Rooms = (props: {
   refresh: () => void;
 }) => {
   const [expanded, setExpanded] = React.useState<number | false>(false);
+  const {
+    state: { baseUrl },
+  } = useHueContext();
+
+  //@todo move to api
+  const activateScene = (scene: any, id: string, refresh: () => void) => {
+    const payload = { scene: scene.key };
+
+    fetch(`${baseUrl}/groups/${id}/action`, {
+      method: "put",
+      body: JSON.stringify(payload),
+    }).then(() => refresh());
+  };
 
   const toggleRoom = React.useCallback(
     (elem: any) => {
