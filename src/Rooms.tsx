@@ -92,6 +92,7 @@ const Rooms = (props: {
         .map((key) => ({ key: key, ...props.groups[parseInt(key)] }))
         .map((elem, id) => (
           <Accordion
+            key={id}
             square
             expanded={expanded === parseInt(elem.key)}
             onChange={(e, newExpanded) =>
