@@ -1,7 +1,7 @@
 import "./App.css";
 import "./react-toggle.css";
 
-import { Box, Icon, Theme, Typography, makeStyles } from "@material-ui/core";
+import { Icon, Theme, Typography, makeStyles } from "@material-ui/core";
 import { RawGroupsResponse, RawLightsResponse } from "./Common";
 import {
   fetchGroups,
@@ -15,64 +15,8 @@ import React from "react";
 import Room from "./Room";
 import Sensor from "./Sensor";
 import Tab from "@material-ui/core/Tab";
+import TabPanel from "./TabPanel";
 import Tabs from "@material-ui/core/Tabs";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: any;
-  value: any;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-const groupSensorsById = (sensors: any) => {
-  const dict: { [name: string]: any } = {};
-  Object.keys(sensors)
-    .map((key) => sensors[parseInt(key)])
-    .forEach((sensor) => {
-      if (sensor && sensor.uniqueid) {
-        const sensorGroupId = sensor.uniqueid.substring(0, 26);
-
-        const create = () => {
-          if (!dict[sensorGroupId]) {
-            dict[sensorGroupId] = {};
-          }
-        };
-        if (sensor.type === "ZLLTemperature") {
-          create();
-          dict[sensorGroupId].temperature = sensor;
-        }
-        if (sensor.type === "ZLLLightLevel") {
-          create();
-          dict[sensorGroupId].light = sensor;
-        }
-        if (sensor.type === "ZLLPresence") {
-          create();
-          dict[sensorGroupId].name = sensor.name;
-          dict[sensorGroupId].presence = sensor;
-        }
-      }
-    });
-  return dict;
-};
 
 function App() {
   const [lights, setLights] = React.useState<RawLightsResponse>({});
@@ -83,7 +27,7 @@ function App() {
     fetchLights(setLights);
     fetchScenes(setScenes);
     fetchGroups(setGroups);
-    fetchSensors((s) => setSensors(groupSensorsById(s)));
+    fetchSensors(setSensors);
   };
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
