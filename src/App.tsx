@@ -1,6 +1,7 @@
 import { CssBaseline, ThemeProvider, createMuiTheme } from "@material-ui/core";
 import {
   HueContext,
+  disconnect,
   initialize,
   refresh,
   useDefaultHueState,
@@ -17,6 +18,7 @@ function App() {
     state: hueState,
     refresh: () => refresh(hueState),
     initialize: (baseUrl: string) => initialize(hueState, baseUrl),
+    disconnect: () => disconnect(hueState),
   };
   React.useEffect(() => hueContext.refresh(), []);
 

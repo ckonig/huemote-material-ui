@@ -16,7 +16,9 @@ export interface IHueState {
   setScenes?: (obj: any) => void;
 }
 export const useDefaultHueState = () => {
-  const [baseUrl, setBaseUrl] = React.useState<string | false>(false);
+  const [baseUrl, setBaseUrl] = React.useState<string | false>(
+    localStorage.getItem("baseUrl") || false
+  );
   const [lights, setLights] = React.useState<RawLightsResponse>({});
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
   const [sensors, setSensors] = React.useState<any>({});
@@ -46,6 +48,17 @@ const _refresh = (state: IHueState, baseUrl: string) => {
   state.setGroups && fetchGroups(baseUrl, state.setGroups);
   state.setSensors && fetchSensors(baseUrl, state.setSensors);
 };
+export const disconnect = (state: IHueState) => {
+  //todo also store username separately,
+  //generate base url in here.
+  // fetch(state.baseUrl + "/config/whitelist/")
+  localStorage.clear();
+  state.setBaseUrl && state.setBaseUrl("");
+  state.setLights && state.setLights({});
+  state.setScenes && state.setScenes({});
+  state.setGroups && state.setGroups({});
+  state.setSensors && state.setSensors({});
+};
 export const refresh = (state: IHueState) => {
   if (state && state.baseUrl) {
     _refresh(state, state.baseUrl || "");
@@ -53,6 +66,7 @@ export const refresh = (state: IHueState) => {
 };
 export const initialize = (state: IHueState, baseUrl: string) => {
   state.setBaseUrl && state.setBaseUrl(baseUrl);
+  localStorage.setItem("baseUrl", baseUrl);
   _refresh(state, baseUrl);
 };
 export const HueContext = React.createContext<IHueContext>({

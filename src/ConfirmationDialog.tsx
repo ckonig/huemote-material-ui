@@ -1,4 +1,4 @@
-import { Checkbox, FormHelperText, TextField } from "@material-ui/core";
+import { Checkbox, FormHelperText, Link, TextField } from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 
 import Button from "@material-ui/core/Button";
@@ -9,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import React from "react";
 import { createBaseUrl } from "./API";
+import generateUID from "./generateUID";
 import { useHueContext } from "./HueContext";
 
 export interface ConfirmationDialogRawProps {
@@ -23,21 +24,17 @@ export interface ConfirmationDialogRawProps {
 function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
   const { onClose, value: valueProp, open, ...other } = props;
   const [value, setValue] = React.useState(valueProp);
-  const radioGroupRef = React.useRef<HTMLElement>(null);
-
-  const fetchLocalBridges = () =>
-    fetch("https://discovery.meethue.com/").then((d) => d.json());
-
-  const getFirstLocalBridge = () =>
-    fetchLocalBridges().then((bridges) => {
-      if (bridges && bridges.length > 0) {
-        setIp(bridges[0].internalipaddress);
-      }
-    });
+  const [UID] = React.useState<string>(generateUID());
 
   React.useEffect(() => {
-    if (!ip) {
-      getFirstLocalBridge();
+    if (!ip && !state.baseUrl) {
+      fetch("https://discovery.meethue.com/")
+        .then((d) => d.json())
+        .then((bridges) => {
+          if (bridges && bridges.length > 0) {
+            setIp(bridges[0].internalipaddress);
+          }
+        });
     }
   }, []);
 
@@ -47,20 +44,21 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
     }
   }, [valueProp, open]);
 
-  const handleEntering = () => {
-    if (radioGroupRef.current != null) {
-      radioGroupRef.current.focus();
-    }
-  };
+  const { initialize, state } = useHueContext();
 
-  const { initialize } = useHueContext();
+  const [consent, setConsent] = React.useState<boolean>(false);
+  const [ip, setIp] = React.useState<string>("");
+
+  if (state.baseUrl) {
+    return null;
+  }
 
   const handleOk = () => {
     //@todo validate input
     if (consent && ip) {
       fetch(`http://${ip}/api`, {
         method: "post",
-        body: JSON.stringify({ devicetype: "react-app" }),
+        body: JSON.stringify({ devicetype: "react-app-" + UID }),
       })
         .then((d) => d.json())
         .then((d) => {
@@ -76,15 +74,11 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
     }
   };
 
-  const [consent, setConsent] = React.useState<boolean>(false);
-  const [ip, setIp] = React.useState<string>("");
-
   return (
     <Dialog
       disableBackdropClick
       disableEscapeKeyDown
       maxWidth="xs"
-      onEntering={handleEntering}
       aria-labelledby="confirmation-dialog-title"
       open={open}
       {...other}
@@ -104,7 +98,6 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
           }
           label="Allow Data Storage"
         />
-
         <TextField
           label=""
           value={ip}
@@ -112,6 +105,15 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
           onChange={(e) => setIp(e.target.value)}
         />
         <FormHelperText>Local Hue Bridge IP Address</FormHelperText>
+        Before pressing "Connect" below, you will need to press the connect
+        hardware button on your Hue Bridge. This will request permissions for
+        this app in your Hue Bridge. You can find the registration of this
+        application as
+        <i> react-app-{UID} </i> under{" "}
+        <Link target="_blank" href="https://account.meethue.com/apps">
+          https://account.meethue.com/apps
+        </Link>
+        .
       </DialogContent>
       <DialogActions>
         <Button disabled={!consent} onClick={handleOk} color="primary">

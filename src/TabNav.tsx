@@ -1,4 +1,4 @@
-import { Icon, IconButton, Theme, makeStyles } from "@material-ui/core";
+import { Button, Icon, IconButton, Theme, makeStyles } from "@material-ui/core";
 
 import React from "react";
 import Rooms from "./Rooms";
@@ -89,10 +89,19 @@ function TabNav() {
         </div>
       </TabPanel>
       <TabPanel value={value} index={4}>
-        @todo configurable bridge connection. if no connection exists, config
-        dialog blocks all other elements config dialog also requests consent to
-        use localstorage in this tab, disconnecting from bridge = removing
-        localStorage is possible
+        You are connected to the bridge via the URL <pre>{baseUrl}</pre>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            if (window.confirm("disconnect from bridge and delete data?")) {
+              localStorage.clear();
+              //@todo reset context as well.
+            }
+          }}
+        >
+          Delete Connection
+        </Button>
       </TabPanel>
     </div>
   );
