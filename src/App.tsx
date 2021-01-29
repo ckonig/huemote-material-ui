@@ -1,9 +1,8 @@
 import "./App.css";
 import "./react-toggle.css";
-import "react-tabs/style/react-tabs.css";
 
+import { Box, Icon, Theme, Typography, makeStyles } from "@material-ui/core";
 import { RawGroupsResponse, RawLightsResponse } from "./Common";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import {
   fetchGroups,
   fetchLights,
@@ -15,6 +14,34 @@ import {
 import React from "react";
 import Room from "./Room";
 import Sensor from "./Sensor";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
 
 const groupSensorsById = (sensors: any) => {
   const dict: { [name: string]: any } = {};
@@ -58,6 +85,11 @@ function App() {
     fetchGroups(setGroups);
     fetchSensors((s) => setSensors(groupSensorsById(s)));
   };
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+    refresh();
+  };
+
   React.useEffect(() => {
     refresh();
   }, []);
@@ -71,6 +103,13 @@ function App() {
     { icon: "fa-thermometer-half", label: "Sensors" },
     { icon: "fa-cookie-bite", label: "Data" },
   ];
+  const [value, setValue] = React.useState(0);
+  const useStyles = makeStyles((theme: Theme) => ({
+    wrapper: {
+      flexDirection: "row",
+    },
+  }));
+  const classes = useStyles();
   return (
     <div style={{ maxWidth: 400, margin: "auto" }}>
       <div style={{ width: "100%", textAlign: "center" }}>
@@ -90,43 +129,57 @@ function App() {
           </h1>
         </button>
       </div>
-      <Tabs onSelect={refresh}>
-        <TabList>
-          {tabs.map((tab, ti) => (
-            <Tab key={ti} style={{ fontSize: "0.9em" }}>
-              <i className={"fa " + tab.icon} />
-              &nbsp; {tab.label}
-            </Tab>
-          ))}
-        </TabList>
-        <TabPanel>
-          {Object.keys(groups)
-            .map((key) => ({ key: key, ...groups[parseInt(key)] }))
-            .map((elem, id) => (
-              <Room
-                id={elem.key}
-                key={id}
-                model={elem}
-                lights={lights}
-                scenes={scenes}
-                refresh={() => refresh()}
-              />
-            ))}
-        </TabPanel>
-        <TabPanel>
-          @todo reuse Room Component to control lights per room
-        </TabPanel>
-        <TabPanel>
-          <div>
-            {Object.keys(sensors)
-              .map((key) => sensors[key])
-              .map((sensor, si) => (
-                <Sensor key={si} model={sensor} />
-              ))}
-          </div>
-        </TabPanel>
-        <TabPanel>@todo configurable bridge connection</TabPanel>
+      <Tabs
+        onChange={handleChange}
+        scrollButtons="on"
+        variant="scrollable"
+        className={classes.wrapper}
+      >
+        {tabs.map((tab, ti) => (
+          <Tab
+            key={ti}
+            style={{ fontSize: "0.9em", width: 75 }}
+            label={
+              <div>
+                <Typography style={{ fontSize: 15 }}>
+                  <Icon className={"fa " + tab.icon} />
+                  &nbsp; {tab.label}
+                </Typography>
+              </div>
+            }
+          />
+        ))}
       </Tabs>
+
+      <TabPanel value={value} index={0}>
+        {Object.keys(groups)
+          .map((key) => ({ key: key, ...groups[parseInt(key)] }))
+          .map((elem, id) => (
+            <Room
+              id={elem.key}
+              key={id}
+              model={elem}
+              lights={lights}
+              scenes={scenes}
+              refresh={() => refresh()}
+            />
+          ))}
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        @todo reuse Room Component to control lights per room
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <div>
+          {Object.keys(sensors)
+            .map((key) => sensors[key])
+            .map((sensor, si) => (
+              <Sensor key={si} model={sensor} />
+            ))}
+        </div>
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        @todo configurable bridge connection
+      </TabPanel>
     </div>
   );
 }
