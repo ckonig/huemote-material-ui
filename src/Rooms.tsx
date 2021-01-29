@@ -8,11 +8,10 @@ import {
   ListItemText,
   Switch,
   Typography,
-  withStyles,
 } from "@material-ui/core";
 
-import MuiAccordion from "@material-ui/core/Accordion";
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
+import Accordion from "./Accordion";
+import AccordionSummary from "./AccordionSummary";
 import { RawGroupsResponse } from "./Common";
 import React from "react";
 import { baseUrl } from "./API";
@@ -32,7 +31,8 @@ const getScenes = (scenes: any, id: string) => {
     );
 };
 
-const toggleScene = (scene: any, id: string, refresh: () => void) => {
+//@todo move to api
+const activateScene = (scene: any, id: string, refresh: () => void) => {
   const payload = { scene: scene.key };
 
   fetch(`${baseUrl}/groups/${id}/action`, {
@@ -40,6 +40,8 @@ const toggleScene = (scene: any, id: string, refresh: () => void) => {
     body: JSON.stringify(payload),
   }).then(() => refresh());
 };
+
+//@todo move mapping to config, based on group names only
 
 const hueToFa = (hue: string) => {
   switch (hue) {
@@ -63,41 +65,7 @@ const hueToFa = (hue: string) => {
   console.error("no icon for class:" + hue);
 };
 
-const Accordion = withStyles({
-  root: {
-    border: "1px solid rgba(0, 0, 0, .125)",
-    boxShadow: "none",
-    "&:not(:last-child)": {
-      borderBottom: 0,
-    },
-    "&:before": {
-      display: "none",
-    },
-    "&$expanded": {
-      margin: "auto",
-    },
-  },
-  expanded: {},
-})(MuiAccordion);
-
-const AccordionSummary = withStyles({
-  root: {
-    backgroundColor: "rgba(0, 0, 0, .03)",
-    borderBottom: "1px solid rgba(0, 0, 0, .125)",
-    marginBottom: -1,
-    minHeight: 56,
-    "&$expanded": {
-      minHeight: 56,
-    },
-  },
-  content: {
-    "&$expanded": {
-      margin: "12px 0",
-    },
-  },
-  expanded: {},
-})(MuiAccordionSummary);
-
+//@todo rename to Scenes
 const Rooms = (props: {
   groups: RawGroupsResponse;
   lights: any;
@@ -106,14 +74,7 @@ const Rooms = (props: {
 }) => {
   const [expanded, setExpanded] = React.useState<number | false>(false);
 
-  const handleChange = (panel: number) => (
-    event: React.ChangeEvent<{}>,
-    newExpanded: boolean
-  ) => {
-    setExpanded(newExpanded ? panel : false);
-  };
-
-  const toggle = React.useCallback(
+  const toggleRoom = React.useCallback(
     (elem: any) => {
       const payload = { on: !elem.state.any_on };
 
@@ -133,7 +94,9 @@ const Rooms = (props: {
           <Accordion
             square
             expanded={expanded === parseInt(elem.key)}
-            onChange={handleChange(parseInt(elem.key))}
+            onChange={(e, newExpanded) =>
+              setExpanded(newExpanded ? parseInt(elem.key) : false)
+            }
           >
             <AccordionSummary
               aria-controls="panel1d-content"
@@ -154,7 +117,7 @@ const Rooms = (props: {
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) => {
                       e.stopPropagation();
-                      toggle(elem);
+                      toggleRoom(elem);
                     }}
                     color="primary"
                     name="checkedB"
@@ -176,7 +139,9 @@ const Rooms = (props: {
                   <ListItem
                     button
                     key={si}
-                    onClick={() => toggleScene(scene, elem.key, props.refresh)}
+                    onClick={() =>
+                      activateScene(scene, elem.key, props.refresh)
+                    }
                   >
                     <ListItemText primary={scene.name} />
                   </ListItem>

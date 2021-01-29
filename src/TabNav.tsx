@@ -27,6 +27,7 @@ function TabNav() {
   const [sensors, setSensors] = React.useState<any>({});
   const [scenes, setScenes] = React.useState<any>({});
   const refresh = () => {
+    //@todo move to HueContext
     fetchLights(setLights);
     fetchScenes(setScenes);
     fetchGroups(setGroups);
@@ -45,7 +46,7 @@ function TabNav() {
     console.log(sensors);
   }, [sensors]);
 
-  //@todo https://stackoverflow.com/questions/41638688/material-uis-tabs-integration-with-react-router-4/41654699
+  //@todo use react router https://stackoverflow.com/questions/41638688/material-uis-tabs-integration-with-react-router-4/41654699
   
   const tabs = [
     { icon: "fa-photo-video", label: "Scenes" },
@@ -106,10 +107,10 @@ function TabNav() {
         <Rooms {...{ lights, scenes, groups, refresh }} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        @todo reuse Room Component to control lights per room
+        @todo control lights per room
       </TabPanel>
       <TabPanel value={value} index={2}>
-        @todo reuse Sensor Component to show switch details
+        @todo show switch battery states
       </TabPanel>
       <TabPanel value={value} index={3}>
         <div>
@@ -121,7 +122,10 @@ function TabNav() {
         </div>
       </TabPanel>
       <TabPanel value={value} index={4}>
-        @todo configurable bridge connection
+        @todo configurable bridge connection.
+        if no connection exists, config dialog blocks all other elements
+        config dialog also requests consent to use localstorage
+        in this tab, disconnecting from bridge = removing localStorage is possible
       </TabPanel>
     </div>
   );
