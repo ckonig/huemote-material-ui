@@ -1,6 +1,3 @@
-import "./App.css";
-import "./react-toggle.css";
-
 import {
   Icon,
   IconButton,
@@ -18,7 +15,7 @@ import {
 } from "./API";
 
 import React from "react";
-import Room from "./Room";
+import Rooms from "./Rooms";
 import Sensor from "./Sensor";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
@@ -50,8 +47,9 @@ function TabNav() {
   const tabs = [
     { icon: "fa-photo-video", label: "Scenes" },
     { icon: "fa-lightbulb", label: "Lights" },
+    { icon: "fa-random", label: "Switches" },
     { icon: "fa-thermometer-half", label: "Sensors" },
-    { icon: "fa-cookie-bite", label: "Data" },
+    { icon: "fa-plug", label: "Bridge" },
   ];
   const [value, setValue] = React.useState(0);
   const useStyles = makeStyles((theme: Theme) => ({
@@ -60,6 +58,7 @@ function TabNav() {
     },
   }));
   const classes = useStyles();
+
   return (
     <div style={{ maxWidth: 400, margin: "auto" }}>
       <div style={{ width: "100%", textAlign: "center" }}>
@@ -79,7 +78,7 @@ function TabNav() {
       </div>
       <Tabs
         onChange={handleChange}
-        scrollButtons="on"
+        scrollButtons="auto"
         variant="scrollable"
         className={classes.wrapper}
         value={value}
@@ -87,7 +86,7 @@ function TabNav() {
         {tabs.map((tab, ti) => (
           <Tab
             key={ti}
-            style={{ fontSize: "0.9em", width: 75 }}
+            style={{ fontSize: "0.9em", width: 85 }}
             label={
               <div>
                 <Typography style={{ fontSize: 15 }}>
@@ -101,23 +100,15 @@ function TabNav() {
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        {Object.keys(groups)
-          .map((key) => ({ key: key, ...groups[parseInt(key)] }))
-          .map((elem, id) => (
-            <Room
-              id={elem.key}
-              key={id}
-              model={elem}
-              lights={lights}
-              scenes={scenes}
-              refresh={() => refresh()}
-            />
-          ))}
+        <Rooms {...{ lights, scenes, groups, refresh }} />
       </TabPanel>
       <TabPanel value={value} index={1}>
         @todo reuse Room Component to control lights per room
       </TabPanel>
       <TabPanel value={value} index={2}>
+        @todo reuse Sensor Component to show switch details
+      </TabPanel>
+      <TabPanel value={value} index={3}>
         <div>
           {Object.keys(sensors)
             .map((key) => sensors[key])
@@ -126,7 +117,7 @@ function TabNav() {
             ))}
         </div>
       </TabPanel>
-      <TabPanel value={value} index={3}>
+      <TabPanel value={value} index={4}>
         @todo configurable bridge connection
       </TabPanel>
     </div>
