@@ -1,7 +1,13 @@
 import "./App.css";
 import "./react-toggle.css";
 
-import { Icon, Theme, Typography, makeStyles } from "@material-ui/core";
+import {
+  Icon,
+  IconButton,
+  Theme,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
 import { RawGroupsResponse, RawLightsResponse } from "./Common";
 import {
   fetchGroups,
@@ -57,21 +63,19 @@ function App() {
   return (
     <div style={{ maxWidth: 400, margin: "auto" }}>
       <div style={{ width: "100%", textAlign: "center" }}>
-        <button
+        <IconButton
+          color="secondary"
           style={{
             outline: "none",
             border: "none",
             width: 50,
             height: 50,
-            paddingTop: 0,
-            marginBottom: 15,
+            fontSize: "2em",
           }}
           onClick={() => shutDown().then(refresh)}
         >
-          <h1 style={{}}>
-            <i className={"fa fa-power-off"} />
-          </h1>
-        </button>
+          <Icon className={"fa fa-power-off"} />
+        </IconButton>
       </div>
       <Tabs
         onChange={handleChange}
