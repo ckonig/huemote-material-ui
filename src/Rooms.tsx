@@ -1,9 +1,11 @@
 import {
   AccordionDetails,
-  Button,
-  ButtonGroup,
+  Box,
   Grid,
   Icon,
+  List,
+  ListItem,
+  ListItemText,
   Switch,
   Typography,
   withStyles,
@@ -138,12 +140,15 @@ const Rooms = (props: {
               id="panel1d-header"
             >
               <Grid style={{ width: "100%" }} container>
-                <Icon
-                  className={`fa ${hueToFa(elem.class)}`}
-                  style={{ width: 45 }}
-                />
-                <Typography>{elem.name}</Typography>
-                <div style={{ position: "absolute", right: 0 }}>
+                <Box display="flex" flexGrow={1} style={{ margin: "auto" }}>
+                  <Icon
+                    className={`fa ${hueToFa(elem.class)}`}
+                    style={{ width: 45 }}
+                  />
+                  <Typography>{elem.name}</Typography>
+                </Box>
+
+                <Box>
                   <Switch
                     checked={elem.state.any_on}
                     onClick={(e) => e.stopPropagation()}
@@ -155,29 +160,28 @@ const Rooms = (props: {
                     name="checkedB"
                     inputProps={{ "aria-label": "primary checkbox" }}
                   />
-                </div>
+                </Box>
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <ButtonGroup
-                orientation="vertical"
+              <List
+                aria-label="secondary"
                 color="default"
-                aria-label="vertical contained primary button group"
-                variant="text"
                 style={{
                   width: "100%",
                   fontSize: "1.25em",
                 }}
               >
                 {getScenes(props.scenes, elem.key).map((scene, si) => (
-                  <Button
+                  <ListItem
+                    button
                     key={si}
                     onClick={() => toggleScene(scene, elem.key, props.refresh)}
                   >
-                    {scene.name}
-                  </Button>
+                    <ListItemText primary={scene.name} />
+                  </ListItem>
                 ))}
-              </ButtonGroup>
+              </List>
             </AccordionDetails>
           </Accordion>
         ))}

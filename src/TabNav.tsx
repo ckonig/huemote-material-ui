@@ -44,6 +44,9 @@ function TabNav() {
   React.useEffect(() => {
     console.log(sensors);
   }, [sensors]);
+
+  //@todo https://stackoverflow.com/questions/41638688/material-uis-tabs-integration-with-react-router-4/41654699
+  
   const tabs = [
     { icon: "fa-photo-video", label: "Scenes" },
     { icon: "fa-lightbulb", label: "Lights" },
