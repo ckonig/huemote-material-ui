@@ -63,14 +63,16 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    console.log(groups);
-  }, [groups]);
+    console.log(sensors);
+  }, [sensors]);
   const tabs = [
-    { icon: "fa-home", label: "Rooms" },
+    { icon: "fa-photo-video", label: "Scenes" },
+    { icon: "fa-lightbulb", label: "Lights" },
     { icon: "fa-thermometer-half", label: "Sensors" },
+    { icon: "fa-cookie-bite", label: "Data" },
   ];
   return (
-    <div style={{ maxWidth: 518, margin: "auto" }}>
+    <div style={{ maxWidth: 400, margin: "auto" }}>
       <div style={{ width: "100%", textAlign: "center" }}>
         <button
           style={{
@@ -79,7 +81,7 @@ function App() {
             width: 50,
             height: 50,
             paddingTop: 0,
-            marginBottom: 30,
+            marginBottom: 15,
           }}
           onClick={() => shutDown().then(refresh)}
         >
@@ -91,7 +93,7 @@ function App() {
       <Tabs onSelect={refresh}>
         <TabList>
           {tabs.map((tab, ti) => (
-            <Tab key={ti}>
+            <Tab key={ti} style={{ fontSize: "0.9em" }}>
               <i className={"fa " + tab.icon} />
               &nbsp; {tab.label}
             </Tab>
@@ -112,6 +114,9 @@ function App() {
             ))}
         </TabPanel>
         <TabPanel>
+          @todo reuse Room Component to control lights per room
+        </TabPanel>
+        <TabPanel>
           <div>
             {Object.keys(sensors)
               .map((key) => sensors[key])
@@ -120,6 +125,7 @@ function App() {
               ))}
           </div>
         </TabPanel>
+        <TabPanel>@todo configurable bridge connection</TabPanel>
       </Tabs>
     </div>
   );

@@ -63,7 +63,7 @@ const Sensor = (props: { model: any }) => (
 
     <Battery level={props.model.presence.config.battery} />
     <Thermometer
-      temp={`${Math.round(
+      temp={`${(
         props.model.temperature.state.temperature / 100
       ).toFixed(2)}`}
     />
