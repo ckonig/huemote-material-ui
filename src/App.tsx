@@ -10,7 +10,6 @@ import {
 import ConfirmationDialog from "./ConfirmationDialog";
 import React from "react";
 import TabNav from "./TabNav";
-import { createBaseUrl } from "./API";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 function App() {

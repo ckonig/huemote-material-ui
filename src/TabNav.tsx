@@ -3,6 +3,7 @@ import { Button, Icon, IconButton, Theme, makeStyles } from "@material-ui/core";
 import React from "react";
 import Rooms from "./Rooms";
 import Sensor from "./Sensor";
+import SwipeableViews from "react-swipeable-views";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import Tabs from "@material-ui/core/Tabs";
@@ -30,6 +31,10 @@ function TabNav() {
     setValue(newValue);
     refresh();
   };
+  const handleSwipeTab = (newValue: number) => {
+    setValue(newValue);
+    refresh();
+  };
   const useStyles = makeStyles((theme: Theme) => ({
     wrapper: {
       flexDirection: "row",
@@ -38,7 +43,14 @@ function TabNav() {
   const classes = useStyles();
 
   return (
-    <div style={{ maxWidth: 400, margin: "auto" }}>
+    <div
+      style={{
+        width: "100vw",
+        maxWidth: 400,
+        margin: "auto",
+        height: '100vh',
+      }}
+    >
       <div style={{ width: "100%", textAlign: "center" }}>
         <IconButton
           color="secondary"
@@ -71,39 +83,47 @@ function TabNav() {
         ))}
       </Tabs>
 
-      <TabPanel value={value} index={0}>
-        <Rooms {...{ lights, scenes, groups, refresh }} />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        @todo control lights per room
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        @todo show switch battery states
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        <div>
-          {Object.keys(sensors)
-            .map((key) => sensors[key])
-            .map((sensor, si) => (
-              <Sensor key={si} model={sensor} />
-            ))}
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        @todo show bridge and connection details
-        <Button
-          endIcon={<Icon className="fa fa-trash" />}
-          variant="contained"
-          color="secondary"
-          onClick={() => {
-            if (window.confirm("disconnect from bridge and delete data?")) {
-              disconnect();
-            }
-          }}
-        >
-          Disconnect from Bridge
-        </Button>
-      </TabPanel>
+      <SwipeableViews
+        style={{ height: "100%" }}
+        containerStyle={{ height: "100%" }}
+        index={value}
+        resistance
+        onChangeIndex={handleSwipeTab}
+      >
+        <TabPanel value={value} index={0}>
+          <Rooms {...{ lights, scenes, groups, refresh }} />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          @todo control lights per room
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          @todo show switch battery states
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <div>
+            {Object.keys(sensors)
+              .map((key) => sensors[key])
+              .map((sensor, si) => (
+                <Sensor key={si} model={sensor} />
+              ))}
+          </div>
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          @todo show bridge and connection details
+          <Button
+            endIcon={<Icon className="fa fa-trash" />}
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              if (window.confirm("disconnect from bridge and delete data?")) {
+                disconnect();
+              }
+            }}
+          >
+            Disconnect from Bridge
+          </Button>
+        </TabPanel>
+      </SwipeableViews>
     </div>
   );
 }

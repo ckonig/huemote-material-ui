@@ -13,6 +13,7 @@ function TabPanel(props: TabPanelProps) {
 
   return (
     <div
+      style={{ height: "100%" }}
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
