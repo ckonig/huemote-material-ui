@@ -93,67 +93,69 @@ const Rooms = (props: {
     <>
       {Object.keys(props.groups)
         .map((key) => ({ key: key, ...props.groups[parseInt(key)] }))
-        .map((elem, id) => (
-          <Accordion
-            key={id}
-            square
-            expanded={expanded === parseInt(elem.key)}
-            onChange={(e, newExpanded) =>
-              setExpanded(newExpanded ? parseInt(elem.key) : false)
-            }
-          >
-            <AccordionSummary
-              aria-controls="panel1d-content"
-              id="panel1d-header"
+        .map((elem, id) =>
+          !elem || !elem.state ? null : (
+            <Accordion
+              key={id}
+              square
+              expanded={expanded === parseInt(elem.key)}
+              onChange={(e, newExpanded) =>
+                setExpanded(newExpanded ? parseInt(elem.key) : false)
+              }
             >
-              <Grid style={{ width: "100%" }} container>
-                <Box display="flex" flexGrow={1} style={{ margin: "auto" }}>
-                  <Icon
-                    className={`fa ${hueToFa(elem.class)}`}
-                    style={{ width: 45 }}
-                  />
-                  <Typography>{elem.name}</Typography>
-                </Box>
-
-                <Box>
-                  <Switch
-                    checked={elem.state.any_on}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      toggleRoom(elem);
-                    }}
-                    color="primary"
-                    name="checkedB"
-                    inputProps={{ "aria-label": "primary checkbox" }}
-                  />
-                </Box>
-              </Grid>
-            </AccordionSummary>
-            <AccordionDetails>
-              <List
-                aria-label="secondary"
-                color="default"
-                style={{
-                  width: "100%",
-                  fontSize: "1.25em",
-                }}
+              <AccordionSummary
+                aria-controls="panel1d-content"
+                id="panel1d-header"
               >
-                {getScenes(props.scenes, elem.key).map((scene, si) => (
-                  <ListItem
-                    button
-                    key={si}
-                    onClick={() =>
-                      activateScene(scene, elem.key, props.refresh)
-                    }
-                  >
-                    <ListItemText primary={scene.name} />
-                  </ListItem>
-                ))}
-              </List>
-            </AccordionDetails>
-          </Accordion>
-        ))}
+                <Grid style={{ width: "100%" }} container>
+                  <Box display="flex" flexGrow={1} style={{ margin: "auto" }}>
+                    <Icon
+                      className={`fa ${hueToFa(elem.class)}`}
+                      style={{ width: 45 }}
+                    />
+                    <Typography>{elem.name}</Typography>
+                  </Box>
+
+                  <Box>
+                    <Switch
+                      checked={elem.state.any_on}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        toggleRoom(elem);
+                      }}
+                      color="primary"
+                      name="checkedB"
+                      inputProps={{ "aria-label": "primary checkbox" }}
+                    />
+                  </Box>
+                </Grid>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List
+                  aria-label="secondary"
+                  color="default"
+                  style={{
+                    width: "100%",
+                    fontSize: "1.25em",
+                  }}
+                >
+                  {getScenes(props.scenes, elem.key).map((scene, si) => (
+                    <ListItem
+                      button
+                      key={si}
+                      onClick={() =>
+                        activateScene(scene, elem.key, props.refresh)
+                      }
+                    >
+                      <ListItemText primary={scene.name} />
+                    </ListItem>
+                  ))}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          )
+        )}
     </>
   );
 };

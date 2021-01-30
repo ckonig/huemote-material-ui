@@ -10,6 +10,7 @@ import {
 import ConfirmationDialog from "./ConfirmationDialog";
 import React from "react";
 import TabNav from "./TabNav";
+import { createBaseUrl } from "./API";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 function App() {
@@ -17,7 +18,8 @@ function App() {
   const hueContext = {
     state: hueState,
     refresh: () => refresh(hueState),
-    initialize: (baseUrl: string) => initialize(hueState, baseUrl),
+    initialize: (ip: string, username: string) =>
+      initialize(hueState, ip, username),
     disconnect: () => disconnect(hueState),
   };
   React.useEffect(() => hueContext.refresh(), []);
@@ -37,8 +39,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <HueContext.Provider value={hueContext}>
-        <TabNav />
-        <ConfirmationDialog open={true} />
+        {hueContext.state.baseUrl && <TabNav />}
+        <ConfirmationDialog />
       </HueContext.Provider>
     </ThemeProvider>
   );

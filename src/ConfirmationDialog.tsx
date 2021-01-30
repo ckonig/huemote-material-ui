@@ -1,4 +1,9 @@
-import { Checkbox, FormHelperText, Link, TextField } from "@material-ui/core";
+import {
+  Checkbox,
+  FormHelperText,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 
 import Button from "@material-ui/core/Button";
@@ -8,7 +13,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import React from "react";
-import { createBaseUrl } from "./API";
 import generateUID from "./generateUID";
 import { useHueContext } from "./HueContext";
 
@@ -16,18 +20,23 @@ export interface ConfirmationDialogRawProps {
   classes: Record<"paper", string>;
   id: string;
   keepMounted: boolean;
-  value: string;
   open: boolean;
-  onClose: (value?: string) => void;
+  onClose: () => void;
+  step: number;
+  next: () => void;
 }
 
 function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
-  const { onClose, value: valueProp, open, ...other } = props;
-  const [value, setValue] = React.useState(valueProp);
-  const [UID] = React.useState<string>(generateUID());
+  const { onClose, open, ...other } = props;
+  const [UID, setUID] = React.useState<string>(generateUID());
 
   React.useEffect(() => {
-    if (!ip && !state.baseUrl) {
+    if (!open) setUID(generateUID);
+  }, [open]);
+
+  //
+  React.useEffect(() => {
+    if (props.step === Steps.BRIDGE && !ip && !state.baseUrl) {
       fetch("https://discovery.meethue.com/")
         .then((d) => d.json())
         .then((bridges) => {
@@ -36,42 +45,120 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
           }
         });
     }
-  }, []);
-
-  React.useEffect(() => {
-    if (!open) {
-      setValue(valueProp);
-    }
-  }, [valueProp, open]);
+  }, [props.step]);
 
   const { initialize, state } = useHueContext();
 
   const [consent, setConsent] = React.useState<boolean>(false);
   const [ip, setIp] = React.useState<string>("");
 
-  if (state.baseUrl) {
+  const getTitle = React.useCallback(() => {
+    if (props.step === Steps.START) {
+      return "Setup";
+    }
+    if (props.step === Steps.CONSENT) {
+      return "Data Storage";
+    }
+    if (props.step === Steps.BRIDGE) {
+      return "Hue Bridge";
+    }
+    if (props.step === Steps.CONNECT) {
+      return "Finish";
+    }
     return null;
-  }
+  }, [props]);
 
-  const handleOk = () => {
-    //@todo validate input
-    if (consent && ip) {
+  const handleOk = React.useCallback(() => {
+    if (props.step === Steps.CONNECT && consent && ip) {
       fetch(`http://${ip}/api`, {
         method: "post",
-        body: JSON.stringify({ devicetype: "react-app-" + UID }),
+        body: JSON.stringify({ devicetype: "hue-react#" + UID }),
       })
         .then((d) => d.json())
         .then((d) => {
           if (d.length === 1 && d[0].error && d[0].error.type === 101) {
-            console.log("ALERT: press connect button!");
+            console.log("ALERT: press connect button! @todo");
           } else if (d.length > 0 && d[0].success && d[0].success.username) {
-            initialize(createBaseUrl(ip, d[0].success.username));
-            onClose(value);
+            initialize(ip, d[0].success.username);
+            onClose();
           } else {
-            console.error("unknown case", d);
+            console.error("unknown case @todo", d);
           }
         });
     }
+    if (props.step === Steps.START) {
+      props.next();
+    }
+    if (props.step === Steps.CONSENT) {
+      props.next();
+    }
+    if (props.step === Steps.BRIDGE) {
+      props.next();
+    }
+  }, [props, UID, initialize, consent, ip, onClose]);
+
+  if (state.baseUrl) {
+    return null;
+  }
+
+  const Content = () => {
+    if (props.step === Steps.START) {
+      return (
+        <Typography>Press Continue to start the Connection Wizard.</Typography>
+      );
+    }
+    if (props.step === Steps.CONSENT) {
+      return (
+        <>
+          <Typography>
+            Your data belongs to you. We need your consent to store it on this
+            device.
+          </Typography>
+          <FormControlLabel
+            control={
+              <Checkbox
+                required
+                checked={consent}
+                onChange={(e, v) => setConsent(v)}
+                name="consent"
+              />
+            }
+            label="Allow Data Storage"
+          />
+        </>
+      );
+    }
+    if (props.step === Steps.BRIDGE) {
+      return (
+        <>
+          <TextField
+            label=""
+            value={ip}
+            variant="outlined"
+            onChange={(e) => setIp(e.target.value)}
+          />
+          <FormHelperText>
+            Enter the IP address of the Hue Bridge on your local network. Make
+            sure your device is connected to the same network.
+          </FormHelperText>
+        </>
+      );
+    }
+    if (props.step === Steps.CONNECT) {
+      return (
+        <>
+          <Typography>
+            Now press the "Connect" hardware button on your Hue Bridge, then
+            press "Finish" below.
+          </Typography>
+          <Typography>
+            This will request permissions for this app (<i> react-app-{UID} </i>
+            ) in your Hue Bridge.
+          </Typography>
+        </>
+      );
+    }
+    return null;
   };
 
   return (
@@ -83,41 +170,17 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
       open={open}
       {...other}
     >
-      <DialogTitle id="confirmation-dialog-title">
-        Connect to Hue Bridge
-      </DialogTitle>
+      <DialogTitle id="confirmation-dialog-title">{getTitle()}</DialogTitle>
       <DialogContent dividers>
-        <FormControlLabel
-          control={
-            <Checkbox
-              required
-              checked={consent}
-              onChange={(e, v) => setConsent(v)}
-              name="consent"
-            />
-          }
-          label="Allow Data Storage"
-        />
-        <TextField
-          label=""
-          value={ip}
-          variant="outlined"
-          onChange={(e) => setIp(e.target.value)}
-        />
-        <FormHelperText>Local Hue Bridge IP Address</FormHelperText>
-        Before pressing "Connect" below, you will need to press the connect
-        hardware button on your Hue Bridge. This will request permissions for
-        this app in your Hue Bridge. You can find the registration of this
-        application as
-        <i> react-app-{UID} </i> under{" "}
-        <Link target="_blank" href="https://account.meethue.com/apps">
-          https://account.meethue.com/apps
-        </Link>
-        .
+        <Content />
       </DialogContent>
       <DialogActions>
-        <Button disabled={!consent} onClick={handleOk} color="primary">
-          Connect
+        <Button
+          disabled={!consent && props.step === Steps.CONSENT}
+          onClick={handleOk}
+          color="primary"
+        >
+          {props.step === Steps.CONNECT ? "Finish" : "Continue"}
         </Button>
       </DialogActions>
     </Dialog>
@@ -137,19 +200,32 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+const Steps = {
+  START: 0,
+  CONSENT: 1,
+  BRIDGE: 2,
+  CONNECT: 3,
+};
 
-export default function ConfirmationDialog(props: { open: boolean }) {
+export default function ConfirmationDialog() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(props.open);
-  const [value, setValue] = React.useState("Dione");
+  const [open, setOpen] = React.useState(true);
+  const {
+    state: { baseUrl },
+  } = useHueContext();
+
+  React.useEffect(() => {
+    if (!baseUrl && !open) {
+      setStep(Steps.START);
+      setOpen(true);
+    }
+  }, [baseUrl, open]);
 
   const handleClose = (newValue?: string) => {
     setOpen(false);
-
-    if (newValue) {
-      setValue(newValue);
-    }
   };
+
+  const [step, setStep] = React.useState(Steps.START);
 
   return (
     <ConfirmationDialogRaw
@@ -158,9 +234,10 @@ export default function ConfirmationDialog(props: { open: boolean }) {
       }}
       id="ringtone-menu"
       keepMounted
+      step={step}
+      next={() => setStep(step + 1)}
       open={open}
       onClose={handleClose}
-      value={value}
     />
   );
 }

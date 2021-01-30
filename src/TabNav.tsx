@@ -13,6 +13,7 @@ function TabNav() {
   const {
     state: { lights, groups, sensors, scenes, baseUrl },
     refresh,
+    disconnect,
   } = useHueContext();
 
   //@todo use react router https://stackoverflow.com/questions/41638688/material-uis-tabs-integration-with-react-router-4/41654699
@@ -89,18 +90,18 @@ function TabNav() {
         </div>
       </TabPanel>
       <TabPanel value={value} index={4}>
-        You are connected to the bridge via the URL <pre>{baseUrl}</pre>
+        @todo show bridge and connection details
         <Button
+          endIcon={<Icon className="fa fa-trash" />}
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={() => {
             if (window.confirm("disconnect from bridge and delete data?")) {
-              localStorage.clear();
-              //@todo reset context as well.
+              disconnect();
             }
           }}
         >
-          Delete Connection
+          Disconnect from Bridge
         </Button>
       </TabPanel>
     </div>
