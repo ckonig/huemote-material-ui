@@ -79,7 +79,7 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
           if (d.length === 1 && d[0].error && d[0].error.type === 101) {
             console.log("ALERT: press connect button! @todo");
           } else if (d.length > 0 && d[0].success && d[0].success.username) {
-            initialize(ip, d[0].success.username);
+            initialize(ip, d[0].success.username, "hue-react#" + UID);
             onClose();
           } else {
             console.error("unknown case @todo", d);

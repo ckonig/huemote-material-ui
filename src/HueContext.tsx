@@ -13,12 +13,14 @@ import React from "react";
 export interface IHueState {
   baseUrl: string | false;
   username: string | false;
+  appname: string | false;
   lights: RawLightsResponse;
   groups: RawGroupsResponse;
   sensors: any;
   scenes: any;
   config: any;
   setBaseUrl?: (ip: string) => void;
+  setAppname?: (a: string) => void;
   setUsername?: (u: string) => void;
   setLights?: (obj: RawLightsResponse) => void;
   setGroups?: (obj: RawGroupsResponse) => void;
@@ -33,6 +35,9 @@ export const useDefaultHueState = () => {
   const [username, setUsername] = React.useState<string | false>(
     localStorage.getItem("username") || false
   );
+  const [appname, setAppname] = React.useState<string | false>(
+    localStorage.getItem("appname") || false
+  );
   const [lights, setLights] = React.useState<RawLightsResponse>({});
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
   const [sensors, setSensors] = React.useState<any>({});
@@ -43,6 +48,8 @@ export const useDefaultHueState = () => {
     setBaseUrl,
     username,
     setUsername,
+    appname,
+    setAppname,
     lights,
     setLights,
     groups,
@@ -59,7 +66,7 @@ export interface IHueContext {
   state: IHueState;
   refresh: () => void;
   disconnect: () => void;
-  initialize: (ip: string, username: string) => void;
+  initialize: (ip: string, username: string, appname: string) => void;
 }
 
 const _refresh = (state: IHueState, baseUrl: string) => {
@@ -84,17 +91,26 @@ export const refresh = (state: IHueState) => {
     _refresh(state, state.baseUrl || "");
   }
 };
-export const initialize = (state: IHueState, ip: string, username: string) => {
+export const initialize = (
+  state: IHueState,
+  ip: string,
+  username: string,
+  appname: string
+) => {
   const baseUrl = createBaseUrl(ip, username);
   state.setBaseUrl && state.setBaseUrl(baseUrl);
   state.setUsername && state.setUsername(username);
+  state.setAppname && state.setAppname(appname);
   localStorage.setItem("baseUrl", baseUrl);
+  localStorage.setItem("username", username);
+  localStorage.setItem("appname", appname);
   _refresh(state, baseUrl);
 };
 export const HueContext = React.createContext<IHueContext>({
   state: {
     baseUrl: false,
     username: false,
+    appname: false,
     lights: {},
     groups: {},
     sensors: {},

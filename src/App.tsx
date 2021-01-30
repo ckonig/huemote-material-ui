@@ -7,7 +7,8 @@ import {
   useDefaultHueState,
 } from "./HueContext";
 
-import ConfirmationDialog from "./ConfirmationDialog";
+import { BrowserRouter } from "react-router-dom";
+import ConfirmationDialog from "./Setup";
 import React from "react";
 import TabNav from "./TabNav";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -17,8 +18,8 @@ function App() {
   const hueContext = {
     state: hueState,
     refresh: () => refresh(hueState),
-    initialize: (ip: string, username: string) =>
-      initialize(hueState, ip, username),
+    initialize: (ip: string, username: string, appname: string) =>
+      initialize(hueState, ip, username, appname),
     disconnect: () => disconnect(hueState),
   };
   React.useEffect(() => hueContext.refresh(), []);
@@ -38,8 +39,10 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <HueContext.Provider value={hueContext}>
-        {hueContext.state.baseUrl && <TabNav />}
-        <ConfirmationDialog />
+        <BrowserRouter>
+          {hueContext.state.baseUrl && <TabNav />}
+          <ConfirmationDialog />
+        </BrowserRouter>
       </HueContext.Provider>
     </ThemeProvider>
   );

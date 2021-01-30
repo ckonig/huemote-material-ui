@@ -1,6 +1,8 @@
-import { AppBar, Icon, IconButton, Theme, makeStyles } from "@material-ui/core";
+import { AppBar, Icon, Theme, makeStyles } from "@material-ui/core";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import Bridge from "./OutlinedCard";
+import Bridge from "./Bridge";
+import Header from "./Header";
 import React from "react";
 import Rooms from "./Rooms";
 import Sensor from "./Sensor";
@@ -8,31 +10,33 @@ import SwipeableViews from "react-swipeable-views";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import Tabs from "@material-ui/core/Tabs";
-import { shutDown } from "./API";
 import { useHueContext } from "./HueContext";
 
-function TabNav() {
+const tabs = [
+  { icon: "fa-photo-video", label: "Scenes", route: "/Scenes" },
+  { icon: "fa-lightbulb", label: "Lights", route: "/Lights" },
+  { icon: "fa-random", label: "Switches", route: "/Switches" },
+  { icon: "fa-thermometer-half", label: "Sensors", route: "/Sensors" },
+  { icon: "fa-plug", label: "Bridge", route: "/Bridge" },
+];
+
+function TabNav(props: RouteComponentProps<any>) {
   const {
-    state: { lights, groups, sensors, scenes, baseUrl, config },
+    state: { lights, groups, sensors, scenes },
     refresh,
   } = useHueContext();
 
-  //@todo use react router https://stackoverflow.com/questions/41638688/material-uis-tabs-integration-with-react-router-4/41654699
+  const getPathIndex = React.useCallback(() => {
+    const found = tabs.findIndex((t) => t.route === props.location.pathname);
+    return found > 0 ? found : 0;
+  }, [props]);
 
-  const tabs = [
-    { icon: "fa-photo-video", label: "Scenes" },
-    { icon: "fa-lightbulb", label: "Lights" },
-    { icon: "fa-random", label: "Switches" },
-    { icon: "fa-thermometer-half", label: "Sensors" },
-    { icon: "fa-plug", label: "Bridge" },
-  ];
-  const [value, setValue] = React.useState(0);
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
+    props.history.push(tabs[newValue].route);
     refresh();
   };
   const handleSwipeTab = (newValue: number) => {
-    setValue(newValue);
+    props.history.push(tabs[newValue].route);
     refresh();
   };
   const useStyles = makeStyles((theme: Theme) => ({
@@ -41,8 +45,6 @@ function TabNav() {
     },
   }));
   const classes = useStyles();
-
-  console.log(config);
 
   return (
     <div
@@ -54,27 +56,13 @@ function TabNav() {
       }}
     >
       <AppBar position="static" color="default">
-        <div style={{ width: "100%", textAlign: "center" }}>
-          <IconButton
-            color="secondary"
-            style={{
-              outline: "none",
-              border: "none",
-              width: 50,
-              height: 50,
-              fontSize: "2em",
-            }}
-            onClick={() => baseUrl && shutDown(baseUrl).then(refresh)}
-          >
-            <Icon className={"fa fa-power-off"} />
-          </IconButton>
-        </div>
+        <Header />
         <Tabs
           onChange={handleTabChange}
           scrollButtons="auto"
           variant="scrollable"
           className={classes.wrapper}
-          value={value}
+          value={getPathIndex()}
         >
           {tabs.map((tab, ti) => (
             <Tab
@@ -86,24 +74,19 @@ function TabNav() {
           ))}
         </Tabs>
       </AppBar>
-
       <SwipeableViews
         style={{ height: "100%" }}
         containerStyle={{ height: "100%" }}
-        index={value}
+        index={getPathIndex()}
         resistance
         onChangeIndex={handleSwipeTab}
       >
-        <TabPanel value={value} index={0}>
+        <TabPanel index={0}>
           <Rooms {...{ lights, scenes, groups, refresh }} />
         </TabPanel>
-        <TabPanel value={value} index={1}>
-          @todo control lights per room
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          @todo show switch battery states
-        </TabPanel>
-        <TabPanel value={value} index={3}>
+        <TabPanel index={1}>@todo control lights per room</TabPanel>
+        <TabPanel index={2}>@todo show switch battery states</TabPanel>
+        <TabPanel index={3}>
           <div>
             {Object.keys(sensors)
               .map((key) => sensors[key])
@@ -112,7 +95,7 @@ function TabNav() {
               ))}
           </div>
         </TabPanel>
-        <TabPanel value={value} index={4}>
+        <TabPanel index={4}>
           <Bridge />
         </TabPanel>
       </SwipeableViews>
@@ -120,4 +103,4 @@ function TabNav() {
   );
 }
 
-export default TabNav;
+export default withRouter(TabNav);

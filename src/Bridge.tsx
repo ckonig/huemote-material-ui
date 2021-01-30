@@ -26,7 +26,7 @@ const useCardStyles = makeStyles({
 
 const Bridge = () => {
   const {
-    state: { config },
+    state: { config, appname },
     disconnect,
   } = useHueContext();
   const cardClasses = useCardStyles();
@@ -57,6 +57,9 @@ const Bridge = () => {
             <span className={cardClasses.label}>Zigbee Channel</span>
             {config.zigbeechannel}
             <br />
+            <span className={cardClasses.label}>App Name</span>
+            {appname || ""}
+            <br/>
           </Typography>
         </CardContent>
         <CardActions style={{ alignItems: "right" }}>
@@ -72,7 +75,7 @@ const Bridge = () => {
               }
             }}
           >
-            Disconnect from Bridge
+            Disconnect
           </Button>
         </CardActions>
       </Card>
