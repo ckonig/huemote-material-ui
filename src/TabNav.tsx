@@ -3,9 +3,10 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Bridge from "./Bridge";
 import Header from "./Header";
+import Lights from "./Lights";
 import React from "react";
-import Rooms from "./Rooms";
-import Sensor from "./Sensor";
+import Scenes from "./Scenes";
+import Sensors from "./Sensors";
 import SwipeableViews from "react-swipeable-views";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
@@ -20,11 +21,14 @@ const tabs = [
   { icon: "fa-plug", label: "Bridge", route: "/Bridge" },
 ];
 
+const useStyles = makeStyles((theme: Theme) => ({
+  wrapper: {
+    flexDirection: "row",
+  },
+}));
+
 function TabNav(props: RouteComponentProps<any>) {
-  const {
-    state: { lights, groups, sensors, scenes },
-    refresh,
-  } = useHueContext();
+  const { refresh } = useHueContext();
 
   const getPathIndex = React.useCallback(() => {
     const found = tabs.findIndex((t) => t.route === props.location.pathname);
@@ -33,17 +37,14 @@ function TabNav(props: RouteComponentProps<any>) {
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     props.history.push(tabs[newValue].route);
-    refresh();
+    //refresh();
   };
+
   const handleSwipeTab = (newValue: number) => {
     props.history.push(tabs[newValue].route);
-    refresh();
+    //refresh();
   };
-  const useStyles = makeStyles((theme: Theme) => ({
-    wrapper: {
-      flexDirection: "row",
-    },
-  }));
+
   const classes = useStyles();
 
   return (
@@ -78,22 +79,17 @@ function TabNav(props: RouteComponentProps<any>) {
         style={{ height: "100%" }}
         containerStyle={{ height: "100%" }}
         index={getPathIndex()}
-        resistance
         onChangeIndex={handleSwipeTab}
       >
         <TabPanel index={0}>
-          <Rooms {...{ lights, scenes, groups, refresh }} />
+          <Scenes />
         </TabPanel>
-        <TabPanel index={1}>@todo control lights per room</TabPanel>
+        <TabPanel index={1}>
+          <Lights />
+        </TabPanel>
         <TabPanel index={2}>@todo show switch battery states</TabPanel>
         <TabPanel index={3}>
-          <div>
-            {Object.keys(sensors)
-              .map((key) => sensors[key])
-              .map((sensor, si) => (
-                <Sensor key={si} model={sensor} />
-              ))}
-          </div>
+          <Sensors />
         </TabPanel>
         <TabPanel index={4}>
           <Bridge />

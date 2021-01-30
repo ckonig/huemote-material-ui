@@ -9,6 +9,7 @@ export interface LightsReponseObj {
   state: any;
   type: string;
 }
+
 export type RawLightsResponse = { [name: number]: LightsReponseObj };
 
 export interface GroupsResponseObj {
@@ -19,6 +20,7 @@ export interface GroupsResponseObj {
   type: string;
   state: any;
 }
+
 export type RawGroupsResponse = {
   [name: number]: GroupsResponseObj;
 };

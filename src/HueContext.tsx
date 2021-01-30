@@ -28,6 +28,7 @@ export interface IHueState {
   setScenes?: (obj: any) => void;
   setConfig?: (obj: any) => void;
 }
+
 export const useDefaultHueState = () => {
   const [baseUrl, setBaseUrl] = React.useState<string | false>(
     localStorage.getItem("baseUrl") || false
@@ -62,6 +63,7 @@ export const useDefaultHueState = () => {
     setConfig,
   };
 };
+
 export interface IHueContext {
   state: IHueState;
   refresh: () => void;
@@ -76,6 +78,7 @@ const _refresh = (state: IHueState, baseUrl: string) => {
   state.setSensors && fetchSensors(baseUrl, state.setSensors);
   state.setConfig && fetchConfig(baseUrl, state.setConfig);
 };
+
 export const disconnect = (state: IHueState) => {
   localStorage.clear();
   state.setBaseUrl && state.setBaseUrl("");
@@ -86,11 +89,13 @@ export const disconnect = (state: IHueState) => {
   state.setSensors && state.setSensors({});
   state.setConfig && state.setConfig({});
 };
+
 export const refresh = (state: IHueState) => {
   if (state && state.baseUrl) {
     _refresh(state, state.baseUrl || "");
   }
 };
+
 export const initialize = (
   state: IHueState,
   ip: string,
@@ -106,6 +111,7 @@ export const initialize = (
   localStorage.setItem("appname", appname);
   _refresh(state, baseUrl);
 };
+
 export const HueContext = React.createContext<IHueContext>({
   state: {
     baseUrl: false,
@@ -121,4 +127,5 @@ export const HueContext = React.createContext<IHueContext>({
   initialize: () => {},
   disconnect: () => {},
 });
+
 export const useHueContext = () => React.useContext(HueContext);

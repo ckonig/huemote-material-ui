@@ -16,30 +16,27 @@ export const myFetch = (url: string) =>
 export const fetchLights = (
   baseUrl: string,
   setData: (d: RawLightsResponse) => void
-) => {
-  myFetch(`${baseUrl}/lights`).then((d) => setData(d));
-};
-export const fetchScenes = (baseUrl: string, setData: (d: any) => void) => {
+) => myFetch(`${baseUrl}/lights`).then((d) => setData(d));
+
+export const fetchScenes = (baseUrl: string, setData: (d: any) => void) =>
   myFetch(`${baseUrl}/scenes`).then((d) => setData(d));
-};
-export const fetchConfig = (baseUrl: string, setData: (d: any)  => void) => {
-    myFetch(`${baseUrl}/config`).then((d) => setData(d));
-}
+
+export const fetchConfig = (baseUrl: string, setData: (d: any) => void) =>
+  myFetch(`${baseUrl}/config`).then((d) => setData(d));
+
 export const fetchGroups = (
   baseUrl: string,
   setData: (d: RawGroupsResponse) => void
-) => {
-  myFetch(`${baseUrl}/groups`).then((d) => setData(d));
-};
-export const fetchSensors = (baseUrl: string, setData: (d: any) => void) => {
+) => myFetch(`${baseUrl}/groups`).then((d) => setData(d));
+
+export const fetchSensors = (baseUrl: string, setData: (d: any) => void) =>
   myFetch(`${baseUrl}/sensors`).then((d) => setData(groupSensorsById(d)));
-};
-export const shutDown = (baseUrl: string) => {
-  return fetch(`${baseUrl}/groups/0/action`, {
+
+export const shutDown = (baseUrl: string) =>
+  fetch(`${baseUrl}/groups/0/action`, {
     method: "put",
     body: JSON.stringify({ on: false }),
   });
-};
 
 const groupSensorsById = (sensors: any) => {
   const dict: { [name: string]: any } = {};
