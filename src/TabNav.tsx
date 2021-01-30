@@ -80,6 +80,8 @@ function TabNav(props: RouteComponentProps<any>) {
         containerStyle={{ height: "100%" }}
         index={getPathIndex()}
         onChangeIndex={handleSwipeTab}
+        disableLazyLoading
+        animateTransitions={false}
       >
         <TabPanel index={0}>
           <Scenes />
