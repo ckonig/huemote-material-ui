@@ -1,6 +1,7 @@
 import { RawGroupsResponse, RawLightsResponse } from "./Common";
 import {
   createBaseUrl,
+  fetchConfig,
   fetchGroups,
   fetchLights,
   fetchScenes,
@@ -16,12 +17,14 @@ export interface IHueState {
   groups: RawGroupsResponse;
   sensors: any;
   scenes: any;
+  config: any;
   setBaseUrl?: (ip: string) => void;
   setUsername?: (u: string) => void;
   setLights?: (obj: RawLightsResponse) => void;
   setGroups?: (obj: RawGroupsResponse) => void;
   setSensors?: (obj: any) => void;
   setScenes?: (obj: any) => void;
+  setConfig?: (obj: any) => void;
 }
 export const useDefaultHueState = () => {
   const [baseUrl, setBaseUrl] = React.useState<string | false>(
@@ -34,6 +37,7 @@ export const useDefaultHueState = () => {
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
   const [sensors, setSensors] = React.useState<any>({});
   const [scenes, setScenes] = React.useState<any>({});
+  const [config, setConfig] = React.useState<any>({});
   return {
     baseUrl,
     setBaseUrl,
@@ -47,6 +51,8 @@ export const useDefaultHueState = () => {
     setSensors,
     scenes,
     setScenes,
+    config,
+    setConfig,
   };
 };
 export interface IHueContext {
@@ -61,6 +67,7 @@ const _refresh = (state: IHueState, baseUrl: string) => {
   state.setScenes && fetchScenes(baseUrl, state.setScenes);
   state.setGroups && fetchGroups(baseUrl, state.setGroups);
   state.setSensors && fetchSensors(baseUrl, state.setSensors);
+  state.setConfig && fetchConfig(baseUrl, state.setConfig);
 };
 export const disconnect = (state: IHueState) => {
   localStorage.clear();
@@ -70,6 +77,7 @@ export const disconnect = (state: IHueState) => {
   state.setScenes && state.setScenes({});
   state.setGroups && state.setGroups({});
   state.setSensors && state.setSensors({});
+  state.setConfig && state.setConfig({});
 };
 export const refresh = (state: IHueState) => {
   if (state && state.baseUrl) {
@@ -91,6 +99,7 @@ export const HueContext = React.createContext<IHueContext>({
     groups: {},
     sensors: {},
     scenes: {},
+    config: {},
   },
   refresh: () => {},
   initialize: () => {},

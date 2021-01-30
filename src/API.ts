@@ -22,6 +22,9 @@ export const fetchLights = (
 export const fetchScenes = (baseUrl: string, setData: (d: any) => void) => {
   myFetch(`${baseUrl}/scenes`).then((d) => setData(d));
 };
+export const fetchConfig = (baseUrl: string, setData: (d: any)  => void) => {
+    myFetch(`${baseUrl}/config`).then((d) => setData(d));
+}
 export const fetchGroups = (
   baseUrl: string,
   setData: (d: RawGroupsResponse) => void

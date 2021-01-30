@@ -1,12 +1,6 @@
-import {
-  AppBar,
-  Button,
-  Icon,
-  IconButton,
-  Theme,
-  makeStyles,
-} from "@material-ui/core";
+import { AppBar, Icon, IconButton, Theme, makeStyles } from "@material-ui/core";
 
+import Bridge from "./OutlinedCard";
 import React from "react";
 import Rooms from "./Rooms";
 import Sensor from "./Sensor";
@@ -19,9 +13,8 @@ import { useHueContext } from "./HueContext";
 
 function TabNav() {
   const {
-    state: { lights, groups, sensors, scenes, baseUrl },
+    state: { lights, groups, sensors, scenes, baseUrl, config },
     refresh,
-    disconnect,
   } = useHueContext();
 
   //@todo use react router https://stackoverflow.com/questions/41638688/material-uis-tabs-integration-with-react-router-4/41654699
@@ -49,6 +42,8 @@ function TabNav() {
   }));
   const classes = useStyles();
 
+  console.log(config);
+
   return (
     <div
       style={{
@@ -58,7 +53,7 @@ function TabNav() {
         height: "100vh",
       }}
     >
-      <AppBar position="static" color="default"> 
+      <AppBar position="static" color="default">
         <div style={{ width: "100%", textAlign: "center" }}>
           <IconButton
             color="secondary"
@@ -118,19 +113,7 @@ function TabNav() {
           </div>
         </TabPanel>
         <TabPanel value={value} index={4}>
-          @todo show bridge and connection details
-          <Button
-            endIcon={<Icon className="fa fa-trash" />}
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              if (window.confirm("disconnect from bridge and delete data?")) {
-                disconnect();
-              }
-            }}
-          >
-            Disconnect from Bridge
-          </Button>
+          <Bridge />
         </TabPanel>
       </SwipeableViews>
     </div>
