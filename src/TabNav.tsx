@@ -1,4 +1,11 @@
-import { Button, Icon, IconButton, Theme, makeStyles } from "@material-ui/core";
+import {
+  AppBar,
+  Button,
+  Icon,
+  IconButton,
+  Theme,
+  makeStyles,
+} from "@material-ui/core";
 
 import React from "react";
 import Rooms from "./Rooms";
@@ -48,40 +55,42 @@ function TabNav() {
         width: "100vw",
         maxWidth: 400,
         margin: "auto",
-        height: '100vh',
+        height: "100vh",
       }}
     >
-      <div style={{ width: "100%", textAlign: "center" }}>
-        <IconButton
-          color="secondary"
-          style={{
-            outline: "none",
-            border: "none",
-            width: 50,
-            height: 50,
-            fontSize: "2em",
-          }}
-          onClick={() => baseUrl && shutDown(baseUrl).then(refresh)}
+      <AppBar position="static" color="default"> 
+        <div style={{ width: "100%", textAlign: "center" }}>
+          <IconButton
+            color="secondary"
+            style={{
+              outline: "none",
+              border: "none",
+              width: 50,
+              height: 50,
+              fontSize: "2em",
+            }}
+            onClick={() => baseUrl && shutDown(baseUrl).then(refresh)}
+          >
+            <Icon className={"fa fa-power-off"} />
+          </IconButton>
+        </div>
+        <Tabs
+          onChange={handleTabChange}
+          scrollButtons="auto"
+          variant="scrollable"
+          className={classes.wrapper}
+          value={value}
         >
-          <Icon className={"fa fa-power-off"} />
-        </IconButton>
-      </div>
-      <Tabs
-        onChange={handleTabChange}
-        scrollButtons="auto"
-        variant="scrollable"
-        className={classes.wrapper}
-        value={value}
-      >
-        {tabs.map((tab, ti) => (
-          <Tab
-            key={ti}
-            style={{ fontSize: "0.9em", width: 85 }}
-            icon={<Icon className={"fa " + tab.icon} />}
-            label={tab.label}
-          />
-        ))}
-      </Tabs>
+          {tabs.map((tab, ti) => (
+            <Tab
+              key={ti}
+              style={{ fontSize: "0.9em", width: 85 }}
+              icon={<Icon className={"fa " + tab.icon} />}
+              label={tab.label}
+            />
+          ))}
+        </Tabs>
+      </AppBar>
 
       <SwipeableViews
         style={{ height: "100%" }}
