@@ -10,17 +10,6 @@ $lightning-size: 18px;
   position: relative;
   margin: 15px 0;
 
-  &:before {
-    content: "";
-    height: 3px;
-    width: 18px;
-    background: #333;
-    display: block;
-    position: absolute;
-    top: -6px;
-    border-radius: 4px 4px 0 0;
-  }
-
   &:after {
     content: "";
     display: block;
