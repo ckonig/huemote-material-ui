@@ -1,0 +1,1 @@
+declare module '@q42philips/hue-color-converter';

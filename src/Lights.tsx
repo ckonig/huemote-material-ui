@@ -1,6 +1,7 @@
 import {
   AccordionDetails,
   Box,
+  Button,
   Divider,
   List,
   ListItem,
@@ -8,15 +9,17 @@ import {
   ListItemText,
   Slider,
   Switch,
-  Typography,
+  TextField,
 } from "@material-ui/core";
 
 import Accordion from "./Accordion";
 import React from "react";
+import RgbPicker from "./RgbPicker";
 import Room from "./Room";
 import { useHueContext } from "./HueContext";
 
 const Lights = () => {
+  const [rgb, setRgb] = React.useState("255-0-0");
   const [expanded, setExpanded] = React.useState<number | false>(false);
   const {
     state: { lights, groups, baseUrl },
@@ -49,6 +52,7 @@ const Lights = () => {
       body: JSON.stringify({ on: !light.state.on }),
     }).then(() => refresh());
   };
+
   const productToIcon = (icon: string) => {
     if (icon === "On/Off plug") return "fa fa-plug";
     if (icon === "Hue lightstrip plus") return "fa fa-tape";
@@ -110,6 +114,9 @@ const Lights = () => {
                             />
                           </Box>
                         </Box>
+
+                        {/** @todo expand color picker optionally, hide by defaut */}
+                        {light.state.xy && <RgbPicker light={light} />}
 
                         {light.state.bri && (
                           <Slider
