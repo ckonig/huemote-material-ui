@@ -32,11 +32,39 @@ export const fetchGroups = (
 export const fetchSensors = (baseUrl: string, setData: (d: any) => void) =>
   myFetch(`${baseUrl}/sensors`).then((d) => setData(groupSensorsById(d)));
 
+//@todo api store to avoid double requests
+export const fetchSwitches = (baseUrl: string, setData: (d: any) => void) =>
+  myFetch(`${baseUrl}/sensors`).then((d) => setData(groupSwitchesById(d)));
+
 export const shutDown = (baseUrl: string) =>
   fetch(`${baseUrl}/groups/0/action`, {
     method: "put",
     body: JSON.stringify({ on: false }),
   });
+
+const groupSwitchesById = (switches: any) => {
+  const dict: { [name: string]: any } = {};
+  Object.keys(switches)
+    .map((key) => switches[parseInt(key)])
+    .forEach((sensor) => {
+      if (sensor && sensor.uniqueid) {
+        const sensorGroupId = sensor.uniqueid.substring(0, 26);
+
+        const create = () => {
+          if (!dict[sensorGroupId]) {
+            dict[sensorGroupId] = {model: sensor};
+          }
+        };
+        if (sensor.type === "ZLLSwitch") {
+          create();
+          dict[sensorGroupId].switch = sensor;
+        }
+      }
+    });
+    console.log('found: ', dict, switches)
+
+  return dict;
+};
 
 const groupSensorsById = (sensors: any) => {
   const dict: { [name: string]: any } = {};
@@ -61,6 +89,7 @@ const groupSensorsById = (sensors: any) => {
         }
         if (sensor.type === "ZLLPresence") {
           create();
+          dict[sensorGroupId].model = sensor;
           dict[sensorGroupId].name = sensor.name;
           dict[sensorGroupId].presence = sensor;
         }

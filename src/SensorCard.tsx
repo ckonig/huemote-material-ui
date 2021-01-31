@@ -12,9 +12,11 @@ import React from "react";
 
 const roomToFa = (room: string) => {
   switch (room) {
+    case "Living":
     case "Living room":
       return "fa-tv";
     case "Bathroom":
+    case "Bath":
       return "fa-toilet-paper";
     case "Bedroom":
       return "fa-bed";
@@ -25,8 +27,10 @@ const roomToFa = (room: string) => {
     case "Kitchen":
       return "fa-coffee";
     case "Entrance":
+    case "entrance":
       return "fa-shoe-prints";
     case "Office":
+    case "Bib":
       return "fa-laptop-house";
   }
   console.error("no icon for room:" + room);
@@ -66,16 +70,29 @@ const toUtc = (date: any) => {
 const Sensor = (props: { model: any }) => {
   //@todo use bridge-timezone from API to correct calculation?
   const diffToNow = React.useCallback(() => {
-    const then = new Date(props.model.presence.state.lastupdated);
+    if (!props.model.model) return null;
+    const then = new Date(props.model?.model?.state?.lastupdated);
     const now_utc = toUtc(new Date(Date.now()));
     const diff = now_utc - toUtc(then);
-    console.log(now_utc, toUtc(then));
+
+    const roundedMinutes = Math.floor(diff / 1000 / 60) - 60;
+
     //@todo why utc doesn't work? remove - 60 minutes hack
-    const roundedMinutes = Math.round(diff / 1000 / 60) - 60;
     if (roundedMinutes >= 60) {
-      return "more than " + Math.round(roundedMinutes / 60) + " hours ago";
+      const hours = Math.floor(roundedMinutes / 60);
+      if (hours > 24) {
+        const days = Math.floor(hours / 24);
+        return days + " days ago";
+      }
+      return hours + " hours ago";
     }
     //@todo more than x days ago
+    if (roundedMinutes === 0) {
+      return "now";
+    }
+    if (roundedMinutes === 1) {
+      return "1 minute ago";
+    }
     return roundedMinutes + " minutes ago";
   }, [props]);
 
@@ -85,47 +102,62 @@ const Sensor = (props: { model: any }) => {
         avatar={
           <Icon
             style={{ margin: "auto", width: "auto" }}
-            className={"fa " + roomToFa(props.model.name.split(" ")[0])}
+            className={"fa " + roomToFa(props.model?.model?.name.split(" ")[0])}
           />
         }
-        title={props.model.name}
-        action={<Battery level={props.model.presence.config.battery} />}
+        title={props.model.model.name}
+        action={
+          props.model?.model?.config ? (
+            <Battery level={props.model.model.config.battery} />
+          ) : null
+        }
         subheader={diffToNow()}
       />
 
-      <CardActions>
-        <Box
-          width="100%"
-          display="flex"
-          justifyContent="space-between"
-          alignContent="center"
-        >
-          <Box>
-            {props.model.light.state.daylight && (
-              <FooterChip icon="sun" label="Daylight" />
+      {props.model.light || props.model.temperature || props.model.presence ? (
+        <CardActions>
+          <Box
+            width="100%"
+            display="flex"
+            justifyContent="space-between"
+            alignContent="center"
+          >
+            {props.model.light && (
+              <Box>
+                {props.model.light?.state?.daylight && (
+                  <FooterChip icon="sun" label="Daylight" />
+                )}
+                {!props.model.light?.state?.daylight && (
+                  <FooterChip icon="moon" label="No daylight" />
+                )}
+              </Box>
             )}
-            {!props.model.light.state.daylight && (
-              <FooterChip icon="moon" label="No daylight" />
+            {props.model.temperature && (
+              <Box>
+                <FooterChip
+                  icon="thermometer"
+                  label={
+                    props.model.temperature &&
+                    `${(
+                      props.model.temperature.state.temperature / 100
+                    ).toFixed(2)}°C`
+                  }
+                />
+              </Box>
+            )}
+            {props.model.presence && (
+              <Box>
+                {props.model.presence?.state?.presence && (
+                  <FooterChip icon="eye" label="Presence" />
+                )}
+                {!props.model.presence?.state?.presence && (
+                  <FooterChip icon="eye-slash" label="No presence" />
+                )}
+              </Box>
             )}
           </Box>
-          <Box>
-            <FooterChip
-              icon="thermometer"
-              label={`${(
-                props.model.temperature.state.temperature / 100
-              ).toFixed(2)}°C`}
-            />
-          </Box>
-          <Box>
-            {props.model.presence.state.presence && (
-              <FooterChip icon="eye" label="Presence" />
-            )}
-            {!props.model.presence.state.presence && (
-              <FooterChip icon="eye-slash" label="No presence" />
-            )}
-          </Box>
-        </Box>
-      </CardActions>
+        </CardActions>
+      ) : null}
     </Card>
   );
 };

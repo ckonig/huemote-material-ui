@@ -6,6 +6,7 @@ import {
   fetchLights,
   fetchScenes,
   fetchSensors,
+  fetchSwitches,
 } from "./API";
 
 import React from "react";
@@ -17,6 +18,7 @@ export interface IHueState {
   lights: RawLightsResponse;
   groups: RawGroupsResponse;
   sensors: any;
+  switches: any;
   scenes: any;
   config: any;
   setBaseUrl?: (ip: string) => void;
@@ -25,6 +27,7 @@ export interface IHueState {
   setLights?: (obj: RawLightsResponse) => void;
   setGroups?: (obj: RawGroupsResponse) => void;
   setSensors?: (obj: any) => void;
+  setSwitches?: (obj: any) => void;
   setScenes?: (obj: any) => void;
   setConfig?: (obj: any) => void;
 }
@@ -42,6 +45,7 @@ export const useDefaultHueState = () => {
   const [lights, setLights] = React.useState<RawLightsResponse>({});
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
   const [sensors, setSensors] = React.useState<any>({});
+  const [switches, setSwitches] = React.useState<any>({});
   const [scenes, setScenes] = React.useState<any>({});
   const [config, setConfig] = React.useState<any>({});
   return {
@@ -57,6 +61,8 @@ export const useDefaultHueState = () => {
     setGroups,
     sensors,
     setSensors,
+    switches,
+    setSwitches,
     scenes,
     setScenes,
     config,
@@ -76,6 +82,7 @@ const _refresh = (state: IHueState, baseUrl: string) => {
   state.setScenes && fetchScenes(baseUrl, state.setScenes);
   state.setGroups && fetchGroups(baseUrl, state.setGroups);
   state.setSensors && fetchSensors(baseUrl, state.setSensors);
+  state.setSwitches && fetchSwitches(baseUrl, state.setSwitches);
   state.setConfig && fetchConfig(baseUrl, state.setConfig);
 };
 
@@ -120,6 +127,7 @@ export const HueContext = React.createContext<IHueContext>({
     lights: {},
     groups: {},
     sensors: {},
+    switches: {},
     scenes: {},
     config: {},
   },

@@ -8,6 +8,7 @@ import React from "react";
 import Scenes from "./Scenes";
 import Sensors from "./Sensors";
 import SwipeableViews from "react-swipeable-views";
+import Switches from "./Switches";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import Tabs from "@material-ui/core/Tabs";
@@ -89,7 +90,9 @@ function TabNav(props: RouteComponentProps<any>) {
         <TabPanel index={1}>
           <Lights />
         </TabPanel>
-        <TabPanel index={2}>@todo show switch battery states</TabPanel>
+        <TabPanel index={2}>
+          <Switches />
+        </TabPanel>
         <TabPanel index={3}>
           <Sensors />
         </TabPanel>
