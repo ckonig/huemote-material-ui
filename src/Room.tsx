@@ -1,5 +1,4 @@
 import {
-  AccordionSummary,
   Box,
   Grid,
   Icon,
@@ -7,6 +6,7 @@ import {
   Typography,
 } from "@material-ui/core";
 
+import AccordionSummary from "./AccordionSummary";
 import React from "react";
 import { hueToFa } from "./HueIcon";
 import { useHueContext } from "./HueContext";

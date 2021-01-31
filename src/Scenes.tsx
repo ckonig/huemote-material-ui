@@ -1,5 +1,8 @@
 import {
   AccordionDetails,
+  Box,
+  Button,
+  Divider,
   List,
   ListItem,
   ListItemText,
@@ -69,13 +72,34 @@ const Scenes = () => {
                   }}
                 >
                   {getScenes(scenes, elem.key).map((scene, si) => (
-                    <ListItem
-                      button
-                      key={si}
-                      onClick={() => activateScene(scene, elem.key, refresh)}
-                    >
-                      <ListItemText primary={scene.name} />
-                    </ListItem>
+                    <>
+                      <ListItem
+                        key={si}
+                        style={{
+                          flexDirection: "column",
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        <Box width="100%" display="flex" flexDirection="row">
+                          <Box display="flex" flexGrow={1}>
+                            <ListItemText primary={scene.name} />
+                          </Box>
+                          <Box>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() =>
+                                activateScene(scene, elem.key, refresh)
+                              }
+                            >
+                              Activate
+                            </Button>
+                          </Box>
+                        </Box>
+                      </ListItem>
+                      <Divider style={{ marginBottom: 13, marginTop: 14 }} />
+                    </>
                   ))}
                 </List>
               </AccordionDetails>

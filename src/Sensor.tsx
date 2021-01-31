@@ -24,6 +24,9 @@ const roomToFa = (room: string) => {
   console.error("no icon for room:" + room);
 };
 
+//@todo show daylight status with fa-sun / fa-moon
+//@todo show presence status with fa-eye / fa-eye-slash
+
 const Sensor = (props: { model: any }) => (
   <div
     style={{

@@ -4,28 +4,17 @@ import {
   Divider,
   List,
   ListItem,
+  ListItemIcon,
   ListItemText,
   Slider,
+  Switch,
+  Typography,
 } from "@material-ui/core";
 
 import Accordion from "./Accordion";
-import { RawLightsResponse } from "./Common";
 import React from "react";
 import Room from "./Room";
 import { useHueContext } from "./HueContext";
-
-const getLights = (
-  lights: RawLightsResponse,
-  roomLights: string[],
-  id: string
-) => {
-  return Object.keys(lights)
-    .map((key: string) => ({
-      key,
-      ...lights[parseInt(key)],
-    }))
-    .filter((light) => roomLights.indexOf(`${light.key}`) > -1);
-};
 
 const Lights = () => {
   const [expanded, setExpanded] = React.useState<number | false>(false);
@@ -34,14 +23,39 @@ const Lights = () => {
     refresh,
   } = useHueContext();
 
+  const getLights = React.useCallback(
+    (roomLights: string[], id: string) => {
+      return Object.keys(lights)
+        .map((key: string) => ({
+          key,
+          ...lights[parseInt(key)],
+        }))
+        .filter((light) => roomLights.indexOf(`${light.key}`) > -1);
+    },
+    [lights]
+  );
+
   //@todo add switch per light
-  
+
   const handleSliderChange = (light: any, newval: any) => {
-    console.log("new brightness:", newval, light);
     fetch(`${baseUrl}/lights/${light.key}/state`, {
       method: "put",
       body: JSON.stringify({ bri: newval }),
     }).then(() => refresh());
+  };
+  const toggleLight = (light: any) => {
+    fetch(`${baseUrl}/lights/${light.key}/state`, {
+      method: "put",
+      body: JSON.stringify({ on: !light.state.on }),
+    }).then(() => refresh());
+  };
+  const productToIcon = (icon: string) => {
+    if (icon === "On/Off plug") return "fa fa-plug";
+    if (icon === "Hue lightstrip plus") return "fa fa-tape";
+    if (icon === "Hue color candle") return "fa fa-fire";
+    if (icon === "Hue color lamp") return "fas fa-lightbulb";
+    if (icon === "Hue color spot") return "fas fa-lightbulb";
+    return "far fa-lightbulb";
   };
   return (
     <>
@@ -67,30 +81,54 @@ const Lights = () => {
                     fontSize: "1.25em",
                   }}
                 >
-                  {getLights(lights, elem.lights, elem.key).map((light, si) => (
-                    <ListItem
-                      key={si}
-                      style={{ flexDirection: "column", margin: 0, padding: 0 }}
-                    >
-                      <ListItemText
-                        style={{ width: "100%" }}
-                        primary={light.name}
-                      />
+                  {getLights(elem.lights, elem.key).map((light, si) => (
+                    <>
+                      <ListItem
+                        key={si}
+                        style={{
+                          flexDirection: "column",
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        <Box width="100%" display="flex" flexDirection="row">
+                          <Box display="flex" flexGrow={1}>
+                            <ListItemIcon
+                              style={{ fontSize: "1.5em", margin: "auto" }}
+                              className={productToIcon(light.productname)}
+                            />
+                            <ListItemText
+                              primary={light.name}
+                              secondary={light.productname}
+                            />
+                          </Box>
+                          <Box>
+                            <Switch
+                              size="small"
+                              checked={!!light.state.on}
+                              onChange={() => toggleLight(light)}
+                            />
+                          </Box>
+                        </Box>
 
-                      {light.state.bri && (
-                        <Slider
-                          disabled={!light.state.on}
-                          min={1}
-                          max={254}
-                          value={light.state.bri}
-                          onChange={(e, v) => console.log(v)}
-                          onChangeCommitted={(e, val) =>
-                            handleSliderChange(light, val)
-                          }
-                          aria-labelledby="continuous-slider"
-                        />
+                        {light.state.bri && (
+                          <Slider
+                            disabled={!light.state.on}
+                            min={1}
+                            max={254}
+                            value={light.state.bri}
+                            onChange={(e, v) => console.log(v)}
+                            onChangeCommitted={(e, val) =>
+                              handleSliderChange(light, val)
+                            }
+                            aria-labelledby="continuous-slider"
+                          />
+                        )}
+                      </ListItem>
+                      {!light.state.bri && (
+                        <Divider style={{ marginBottom: 13, marginTop: 14 }} />
                       )}
-                    </ListItem>
+                    </>
                   ))}
                 </List>
               </AccordionDetails>
