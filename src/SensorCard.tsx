@@ -38,14 +38,20 @@ const roomToFa = (room: string) => {
 
 const iconStyle = {
   width: "auto",
+  height: "auto",
   margin: "auto",
-  marginLeft: "10px",
-  fontSize: "1em",
-};
+  fontSize: '0.8em',
+  paddingLeft: '10px'
+}
 
-const FooterChip = (props: { icon: string; label: string }) => {
+const FooterChip = (props: {
+  icon: string;
+  label: string;
+  opacity?: number;
+}) => {
   return (
     <Chip
+      style={{ backgroundColor: `rgba(144,202,253,${props.opacity})` }}
       variant="outlined"
       size="small"
       icon={<Icon style={iconStyle} className={`fa fa-${props.icon}`} />}
@@ -96,6 +102,14 @@ const Sensor = (props: { model: any }) => {
     return roundedMinutes + " minutes ago";
   }, [props]);
 
+  const buttonEventToStr = (buttonevent: number) => {
+    if (buttonevent === 1002) return "on";
+    if (buttonevent === 2002) return "dim +";
+    if (buttonevent === 3002) return "dim -";
+    if (buttonevent === 4002) return "off";
+    return "";
+  };
+
   return (
     <Card variant="outlined">
       <CardHeader
@@ -114,50 +128,61 @@ const Sensor = (props: { model: any }) => {
         subheader={diffToNow()}
       />
 
-      {props.model.light || props.model.temperature || props.model.presence ? (
-        <CardActions>
-          <Box
-            width="100%"
-            display="flex"
-            justifyContent="space-between"
-            alignContent="center"
-          >
-            {props.model.light && (
-              <Box>
-                {props.model.light?.state?.daylight && (
-                  <FooterChip icon="sun" label="Daylight" />
-                )}
-                {!props.model.light?.state?.daylight && (
-                  <FooterChip icon="moon" label="No daylight" />
-                )}
-              </Box>
-            )}
-            {props.model.temperature && (
-              <Box>
+      <CardActions>
+        <Box
+          width="100%"
+          display="flex"
+          justifyContent="space-between"
+          alignContent="center"
+        >
+          {props.model.light && (
+            <Box>
+              <FooterChip
+                icon={props.model.light?.state.dark? "moon" : "sun"}
+                label={props.model.light?.state?.lightlevel}
+                opacity={parseInt(props.model.light?.state?.lightlevel) / 33000}
+              />
+            </Box>
+          )}
+          {props.model.temperature && (
+            <Box>
+              <FooterChip
+                icon="thermometer"
+                label={
+                  props.model.temperature &&
+                  `${(props.model.temperature.state.temperature / 100).toFixed(
+                    2
+                  )}°C`
+                }
+              />
+            </Box>
+          )}
+          {props.model.presence && (
+            <Box>
+              {props.model.presence?.state?.presence && (
+                <FooterChip icon="eye" label="Presence" />
+              )}
+              {!props.model.presence?.state?.presence && (
+                <FooterChip icon="eye-slash" label="No presence" />
+              )}
+            </Box>
+          )}
+
+          {props.model.switch?.state?.buttonevent && (
+            <Box>
+              {props.model.switch?.state?.buttonevent && (
                 <FooterChip
-                  icon="thermometer"
+                  icon="hand-point-down"
                   label={
-                    props.model.temperature &&
-                    `${(
-                      props.model.temperature.state.temperature / 100
-                    ).toFixed(2)}°C`
+                    "last button pressed: " +
+                    buttonEventToStr(props.model.switch?.state?.buttonevent)
                   }
                 />
-              </Box>
-            )}
-            {props.model.presence && (
-              <Box>
-                {props.model.presence?.state?.presence && (
-                  <FooterChip icon="eye" label="Presence" />
-                )}
-                {!props.model.presence?.state?.presence && (
-                  <FooterChip icon="eye-slash" label="No presence" />
-                )}
-              </Box>
-            )}
-          </Box>
-        </CardActions>
-      ) : null}
+              )}
+            </Box>
+          )}
+        </Box>
+      </CardActions>
     </Card>
   );
 };

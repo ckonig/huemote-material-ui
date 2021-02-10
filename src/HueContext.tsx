@@ -1,12 +1,11 @@
-import { RawGroupsResponse, RawLightsResponse } from "./Common";
+import { RawGroupsResponse, RawLightsResponse, SensorRootObject } from "./Common";
 import {
   createBaseUrl,
   fetchConfig,
   fetchGroups,
   fetchLights,
   fetchScenes,
-  fetchSensors,
-  fetchSwitches,
+  fetchSensorsAndSwitches,
 } from "./API";
 
 import React from "react";
@@ -17,8 +16,8 @@ export interface IHueState {
   appname: string | false;
   lights: RawLightsResponse;
   groups: RawGroupsResponse;
-  sensors: any;
-  switches: any;
+  sensors: SensorRootObject;
+  switches: SensorRootObject;
   scenes: any;
   config: any;
   setBaseUrl?: (ip: string) => void;
@@ -26,8 +25,8 @@ export interface IHueState {
   setUsername?: (u: string) => void;
   setLights?: (obj: RawLightsResponse) => void;
   setGroups?: (obj: RawGroupsResponse) => void;
-  setSensors?: (obj: any) => void;
-  setSwitches?: (obj: any) => void;
+  setSensors?: (obj: SensorRootObject) => void;
+  setSwitches?: (obj: SensorRootObject) => void;
   setScenes?: (obj: any) => void;
   setConfig?: (obj: any) => void;
 }
@@ -44,8 +43,8 @@ export const useDefaultHueState = () => {
   );
   const [lights, setLights] = React.useState<RawLightsResponse>({});
   const [groups, setGroups] = React.useState<RawGroupsResponse>({});
-  const [sensors, setSensors] = React.useState<any>({});
-  const [switches, setSwitches] = React.useState<any>({});
+  const [sensors, setSensors] = React.useState<SensorRootObject>({});
+  const [switches, setSwitches] = React.useState<SensorRootObject>({});
   const [scenes, setScenes] = React.useState<any>({});
   const [config, setConfig] = React.useState<any>({});
   return {
@@ -81,8 +80,9 @@ const _refresh = (state: IHueState, baseUrl: string) => {
   state.setLights && fetchLights(baseUrl, state.setLights);
   state.setScenes && fetchScenes(baseUrl, state.setScenes);
   state.setGroups && fetchGroups(baseUrl, state.setGroups);
-  state.setSensors && fetchSensors(baseUrl, state.setSensors);
-  state.setSwitches && fetchSwitches(baseUrl, state.setSwitches);
+  state.setSensors &&
+    state.setSwitches &&
+    fetchSensorsAndSwitches(baseUrl, state.setSensors, state.setSwitches);
   state.setConfig && fetchConfig(baseUrl, state.setConfig);
 };
 

@@ -1,9 +1,13 @@
-import { RawGroupsResponse, RawLightsResponse } from "./Common";
+import {
+  RawGroupsResponse,
+  RawLightsResponse,
+  SensorRootObject,
+} from "./Common";
 
 export const createBaseUrl = (ip: string, token: string) =>
   `http://${ip}/api/${token}`;
 
-export const myFetch = (url: string) =>
+export const myFetch: (url: string) => Promise<any> = (url) =>
   fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -29,12 +33,21 @@ export const fetchGroups = (
   setData: (d: RawGroupsResponse) => void
 ) => myFetch(`${baseUrl}/groups`).then((d) => setData(d));
 
-export const fetchSensors = (baseUrl: string, setData: (d: any) => void) =>
-  myFetch(`${baseUrl}/sensors`).then((d) => setData(groupSensorsById(d)));
-
 //@todo api store to avoid double requests
-export const fetchSwitches = (baseUrl: string, setData: (d: any) => void) =>
-  myFetch(`${baseUrl}/sensors`).then((d) => setData(groupSwitchesById(d)));
+const _fetchSensors: (baseUrl: string) => Promise<SensorRootObject> = (
+  baseUrl
+) => myFetch(`${baseUrl}/sensors`);
+
+//@todo reuse original structure?
+export const fetchSensorsAndSwitches = (
+  baseUrl: string,
+  setSensors: (d: SensorRootObject) => void,
+  setSwitches: (d: SensorRootObject) => void
+) =>
+  _fetchSensors(baseUrl).then((d) => {
+    setSensors(groupSensorsById(d));
+    setSwitches(groupSwitchesById(d));
+  });
 
 export const shutDown = (baseUrl: string) =>
   fetch(`${baseUrl}/groups/0/action`, {
@@ -52,7 +65,7 @@ const groupSwitchesById = (switches: any) => {
 
         const create = () => {
           if (!dict[sensorGroupId]) {
-            dict[sensorGroupId] = {model: sensor};
+            dict[sensorGroupId] = { model: sensor };
           }
         };
         if (sensor.type === "ZLLSwitch") {
@@ -61,11 +74,14 @@ const groupSwitchesById = (switches: any) => {
         }
       }
     });
-    console.log('found: ', dict, switches)
+  console.log("found: ", dict, switches);
 
   return dict;
 };
 
+//@todo continue to use own types.
+//separate types for sensor and switch
+//(sensor groups three sensors, switch has different properties)
 const groupSensorsById = (sensors: any) => {
   const dict: { [name: string]: any } = {};
   Object.keys(sensors)
