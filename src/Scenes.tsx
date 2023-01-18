@@ -11,7 +11,8 @@ import {
 import Accordion from "./Accordion";
 import React from "react";
 import Room from "./Room";
-import { useHueContext } from "./HueContext";
+import useGroups from "./queries/groups";
+import useScenes from "./queries/scenes";
 
 const getScenes = (scenes: any, id: string) => {
   return Object.keys(scenes)
@@ -30,22 +31,8 @@ const getScenes = (scenes: any, id: string) => {
 
 const Scenes = () => {
   const [expanded, setExpanded] = React.useState<number | false>(false);
-  const {
-    state: { baseUrl, groups, scenes },
-    refresh,
-  } = useHueContext();
-
-  const activateScene = React.useCallback(
-    (scene: any, id: string, refresh: () => void) => {
-      const payload = { scene: scene.key };
-      //@todo move to api
-      fetch(`${baseUrl}/groups/${id}/action`, {
-        method: "put",
-        body: JSON.stringify(payload),
-      }).then(() => refresh());
-    },
-    [baseUrl]
-  );
+  const { scenes, activate } = useScenes();
+  const { groups } = useGroups();
 
   return (
     <>
@@ -89,9 +76,7 @@ const Scenes = () => {
                             <Button
                               size="small"
                               variant="outlined"
-                              onClick={() =>
-                                activateScene(scene, elem.key, refresh)
-                              }
+                              onClick={() => activate(scene, elem.key)}
                             >
                               Activate
                             </Button>

@@ -1,28 +1,18 @@
-import {
-  createBaseUrl,
-  fetchConfig,
-  fetchGroups,
-  fetchScenes,
-  fetchSensorsAndSwitches,
-} from "./API";
+import { createBaseUrl, fetchConfig, fetchSensorsAndSwitches } from "./API";
 
 import React from "react";
-import { GroupsResponse } from "./clip/v1/groups";
 import { SensorRootObject } from "./clip/v1/sensors";
 
 export interface IHueState {
   baseUrl: string | false;
   username: string | false;
   appname: string | false;
-  groups: GroupsResponse;
   sensors: SensorRootObject;
   switches: SensorRootObject;
-  scenes: any;
   config: any;
   setBaseUrl?: (ip: string) => void;
   setAppname?: (a: string) => void;
   setUsername?: (u: string) => void;
-  setGroups?: (obj: GroupsResponse) => void;
   setSensors?: (obj: SensorRootObject) => void;
   setSwitches?: (obj: SensorRootObject) => void;
   setScenes?: (obj: any) => void;
@@ -39,7 +29,6 @@ export const useDefaultHueState = () => {
   const [appname, setAppname] = React.useState<string | false>(
     localStorage.getItem("appname") || false
   );
-  const [groups, setGroups] = React.useState<GroupsResponse>({});
   const [sensors, setSensors] = React.useState<SensorRootObject>({});
   const [switches, setSwitches] = React.useState<SensorRootObject>({});
   const [scenes, setScenes] = React.useState<any>({});
@@ -51,14 +40,10 @@ export const useDefaultHueState = () => {
     setUsername,
     appname,
     setAppname,
-    groups,
-    setGroups,
     sensors,
     setSensors,
     switches,
     setSwitches,
-    scenes,
-    setScenes,
     config,
     setConfig,
   };
@@ -72,8 +57,6 @@ export interface IHueContext {
 }
 
 const _refresh = (state: IHueState, baseUrl: string) => {
-  state.setScenes && fetchScenes(baseUrl, state.setScenes);
-  state.setGroups && fetchGroups(baseUrl, state.setGroups);
   state.setSensors &&
     state.setSwitches &&
     fetchSensorsAndSwitches(baseUrl, state.setSensors, state.setSwitches);
@@ -85,7 +68,6 @@ export const disconnect = (state: IHueState) => {
   state.setBaseUrl && state.setBaseUrl("");
   state.setUsername && state.setUsername("");
   state.setScenes && state.setScenes({});
-  state.setGroups && state.setGroups({});
   state.setSensors && state.setSensors({});
   state.setConfig && state.setConfig({});
 };
@@ -117,10 +99,8 @@ export const HueContext = React.createContext<IHueContext>({
     baseUrl: false,
     username: false,
     appname: false,
-    groups: {},
     sensors: {},
     switches: {},
-    scenes: {},
     config: {},
   },
   refresh: () => {},

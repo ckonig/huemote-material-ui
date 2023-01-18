@@ -12,16 +12,13 @@ import {
 import Accordion from "./Accordion";
 import React from "react";
 import Room from "./Room";
-import { useHueContext } from "./HueContext";
 import useLights from "./queries/lights";
 import ProductIcon from "./ProductIcon";
+import useGroups from "./queries/groups";
 
 const Lights = () => {
   const [expanded, setExpanded] = React.useState<number | false>(false);
-  const {
-    state: { groups },
-  } = useHueContext();
-
+  const { groups } = useGroups();
   const { lights, toggle, setBrightness } = useLights();
 
   const getLights = React.useCallback(

@@ -1,4 +1,3 @@
-import { GroupsResponse } from "./clip/v1/groups";
 import { SensorRootObject } from "./clip/v1/sensors";
 
 export const createBaseUrl = (ip: string, token: string) =>
@@ -14,16 +13,8 @@ export const myFetch: <T>(url: string) => Promise<T> = (url) =>
     })
     .then((d) => d.json());
 
-export const fetchScenes = (baseUrl: string, setData: (d: any) => void) =>
-  myFetch(`${baseUrl}/scenes`).then((d) => setData(d));
-
 export const fetchConfig = (baseUrl: string, setData: (d: any) => void) =>
   myFetch(`${baseUrl}/config`).then((d) => setData(d));
-
-export const fetchGroups = (
-  baseUrl: string,
-  setData: (d: GroupsResponse) => void
-) => myFetch<GroupsResponse>(`${baseUrl}/groups`).then((d) => setData(d));
 
 //@todo api store to avoid double requests
 const _fetchSensors: (baseUrl: string) => Promise<SensorRootObject> = (
