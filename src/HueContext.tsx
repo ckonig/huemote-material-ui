@@ -1,21 +1,20 @@
-import { RawGroupsResponse, RawLightsResponse, SensorRootObject } from "./Common";
 import {
   createBaseUrl,
   fetchConfig,
   fetchGroups,
-  fetchLights,
   fetchScenes,
   fetchSensorsAndSwitches,
 } from "./API";
 
 import React from "react";
+import { GroupsResponse } from "./clip/v1/groups";
+import { SensorRootObject } from "./clip/v1/sensors";
 
 export interface IHueState {
   baseUrl: string | false;
   username: string | false;
   appname: string | false;
-  lights: RawLightsResponse;
-  groups: RawGroupsResponse;
+  groups: GroupsResponse;
   sensors: SensorRootObject;
   switches: SensorRootObject;
   scenes: any;
@@ -23,8 +22,7 @@ export interface IHueState {
   setBaseUrl?: (ip: string) => void;
   setAppname?: (a: string) => void;
   setUsername?: (u: string) => void;
-  setLights?: (obj: RawLightsResponse) => void;
-  setGroups?: (obj: RawGroupsResponse) => void;
+  setGroups?: (obj: GroupsResponse) => void;
   setSensors?: (obj: SensorRootObject) => void;
   setSwitches?: (obj: SensorRootObject) => void;
   setScenes?: (obj: any) => void;
@@ -41,8 +39,7 @@ export const useDefaultHueState = () => {
   const [appname, setAppname] = React.useState<string | false>(
     localStorage.getItem("appname") || false
   );
-  const [lights, setLights] = React.useState<RawLightsResponse>({});
-  const [groups, setGroups] = React.useState<RawGroupsResponse>({});
+  const [groups, setGroups] = React.useState<GroupsResponse>({});
   const [sensors, setSensors] = React.useState<SensorRootObject>({});
   const [switches, setSwitches] = React.useState<SensorRootObject>({});
   const [scenes, setScenes] = React.useState<any>({});
@@ -54,8 +51,6 @@ export const useDefaultHueState = () => {
     setUsername,
     appname,
     setAppname,
-    lights,
-    setLights,
     groups,
     setGroups,
     sensors,
@@ -77,7 +72,6 @@ export interface IHueContext {
 }
 
 const _refresh = (state: IHueState, baseUrl: string) => {
-  state.setLights && fetchLights(baseUrl, state.setLights);
   state.setScenes && fetchScenes(baseUrl, state.setScenes);
   state.setGroups && fetchGroups(baseUrl, state.setGroups);
   state.setSensors &&
@@ -90,7 +84,6 @@ export const disconnect = (state: IHueState) => {
   localStorage.clear();
   state.setBaseUrl && state.setBaseUrl("");
   state.setUsername && state.setUsername("");
-  state.setLights && state.setLights({});
   state.setScenes && state.setScenes({});
   state.setGroups && state.setGroups({});
   state.setSensors && state.setSensors({});
@@ -124,7 +117,6 @@ export const HueContext = React.createContext<IHueContext>({
     baseUrl: false,
     username: false,
     appname: false,
-    lights: {},
     groups: {},
     sensors: {},
     switches: {},

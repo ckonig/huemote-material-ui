@@ -1,13 +1,10 @@
-import {
-  RawGroupsResponse,
-  RawLightsResponse,
-  SensorRootObject,
-} from "./Common";
+import { GroupsResponse } from "./clip/v1/groups";
+import { SensorRootObject } from "./clip/v1/sensors";
 
 export const createBaseUrl = (ip: string, token: string) =>
   `http://${ip}/api/${token}`;
 
-export const myFetch: (url: string) => Promise<any> = (url) =>
+export const myFetch: <T>(url: string) => Promise<T> = (url) =>
   fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -17,11 +14,6 @@ export const myFetch: (url: string) => Promise<any> = (url) =>
     })
     .then((d) => d.json());
 
-export const fetchLights = (
-  baseUrl: string,
-  setData: (d: RawLightsResponse) => void
-) => myFetch(`${baseUrl}/lights`).then((d) => setData(d));
-
 export const fetchScenes = (baseUrl: string, setData: (d: any) => void) =>
   myFetch(`${baseUrl}/scenes`).then((d) => setData(d));
 
@@ -30,8 +22,8 @@ export const fetchConfig = (baseUrl: string, setData: (d: any) => void) =>
 
 export const fetchGroups = (
   baseUrl: string,
-  setData: (d: RawGroupsResponse) => void
-) => myFetch(`${baseUrl}/groups`).then((d) => setData(d));
+  setData: (d: GroupsResponse) => void
+) => myFetch<GroupsResponse>(`${baseUrl}/groups`).then((d) => setData(d));
 
 //@todo api store to avoid double requests
 const _fetchSensors: (baseUrl: string) => Promise<SensorRootObject> = (
@@ -47,12 +39,6 @@ export const fetchSensorsAndSwitches = (
   _fetchSensors(baseUrl).then((d) => {
     setSensors(groupSensorsById(d));
     setSwitches(groupSwitchesById(d));
-  });
-
-export const shutDown = (baseUrl: string) =>
-  fetch(`${baseUrl}/groups/0/action`, {
-    method: "put",
-    body: JSON.stringify({ on: false }),
   });
 
 const groupSwitchesById = (switches: any) => {

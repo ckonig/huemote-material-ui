@@ -1,10 +1,4 @@
-import {
-  Box,
-  Grid,
-  Icon,
-  Switch,
-  Typography,
-} from "@material-ui/core";
+import { Box, Grid, Icon, Switch, Typography } from "@material-ui/core";
 
 import AccordionSummary from "./AccordionSummary";
 import React from "react";

@@ -1,13 +1,8 @@
 import { Icon, IconButton } from "@material-ui/core";
-
-import { shutDown } from "./API";
-import { useHueContext } from "./HueContext";
+import useLights from "./queries/lights";
 
 const Header = () => {
-  const {
-    state: { baseUrl },
-    refresh,
-  } = useHueContext();
+  const { shutDown } = useLights();
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
       <IconButton
@@ -19,7 +14,7 @@ const Header = () => {
           height: 50,
           fontSize: "2em",
         }}
-        onClick={() => baseUrl && shutDown(baseUrl).then(refresh)}
+        onClick={() => shutDown()}
       >
         <Icon className={"fa fa-power-off"} />
       </IconButton>

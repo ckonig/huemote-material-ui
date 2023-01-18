@@ -12,6 +12,7 @@ import ConfirmationDialog from "./Setup";
 import React from "react";
 import TabNav from "./TabNav";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function App() {
   const hueState = useDefaultHueState();
@@ -22,7 +23,7 @@ function App() {
       initialize(hueState, ip, username, appname),
     disconnect: () => disconnect(hueState),
   };
-  React.useEffect(() => hueContext.refresh(), [hueContext]);
+  React.useEffect(() => hueContext.refresh(), []);
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = React.useMemo(
@@ -34,17 +35,20 @@ function App() {
       }),
     [prefersDarkMode]
   );
+  const queryClient = new QueryClient();
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <HueContext.Provider value={hueContext}>
-        <BrowserRouter>
-          {hueContext.state.baseUrl && <TabNav />}
-          <ConfirmationDialog />
-        </BrowserRouter>
-      </HueContext.Provider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <HueContext.Provider value={hueContext}>
+          <BrowserRouter>
+            {hueContext.state.baseUrl && <TabNav />}
+            <ConfirmationDialog />
+          </BrowserRouter>
+        </HueContext.Provider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
