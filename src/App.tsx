@@ -3,7 +3,6 @@ import {
   HueContext,
   disconnect,
   initialize,
-  refresh,
   useDefaultHueState,
 } from "./HueContext";
 
@@ -18,12 +17,10 @@ function App() {
   const hueState = useDefaultHueState();
   const hueContext = {
     state: hueState,
-    refresh: () => refresh(hueState),
     initialize: (ip: string, username: string, appname: string) =>
       initialize(hueState, ip, username, appname),
     disconnect: () => disconnect(hueState),
   };
-  React.useEffect(() => hueContext.refresh(), []);
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = React.useMemo(

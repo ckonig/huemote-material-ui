@@ -1,11 +1,9 @@
 import { Paper } from "@material-ui/core";
 import Sensor from "./SensorCard";
-import { useHueContext } from "./HueContext";
+import useAccessories from "./queries/accessories";
 
 const Sensors = () => {
-  const {
-    state: { sensors },
-  } = useHueContext();
+  const { sensors } = useAccessories();
   return (
     <Paper placeholder="loading">
       {Object.keys(sensors)
