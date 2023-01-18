@@ -7,6 +7,7 @@ import React from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { useHueContext } from "./HueContext";
+import useConfig from "./queries/config";
 
 const useCardStyles = makeStyles({
   root: {
@@ -26,9 +27,10 @@ const useCardStyles = makeStyles({
 
 const Bridge = () => {
   const {
-    state: { config, appname },
+    state: { appname },
     disconnect,
   } = useHueContext();
+  const { config } = useConfig();
   const cardClasses = useCardStyles();
   return (
     <>
@@ -59,7 +61,7 @@ const Bridge = () => {
             <br />
             <span className={cardClasses.label}>App Name</span>
             {appname || ""}
-            <br/>
+            <br />
           </Typography>
         </CardContent>
         <CardActions style={{ alignItems: "right" }}>

@@ -13,9 +13,6 @@ export const myFetch: <T>(url: string) => Promise<T> = (url) =>
     })
     .then((d) => d.json());
 
-export const fetchConfig = (baseUrl: string, setData: (d: any) => void) =>
-  myFetch(`${baseUrl}/config`).then((d) => setData(d));
-
 //@todo api store to avoid double requests
 const _fetchSensors: (baseUrl: string) => Promise<SensorRootObject> = (
   baseUrl

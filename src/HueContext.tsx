@@ -1,4 +1,4 @@
-import { createBaseUrl, fetchConfig, fetchSensorsAndSwitches } from "./API";
+import { createBaseUrl, fetchSensorsAndSwitches } from "./API";
 
 import React from "react";
 import { SensorRootObject } from "./clip/v1/sensors";
@@ -9,14 +9,11 @@ export interface IHueState {
   appname: string | false;
   sensors: SensorRootObject;
   switches: SensorRootObject;
-  config: any;
   setBaseUrl?: (ip: string) => void;
   setAppname?: (a: string) => void;
   setUsername?: (u: string) => void;
   setSensors?: (obj: SensorRootObject) => void;
   setSwitches?: (obj: SensorRootObject) => void;
-  setScenes?: (obj: any) => void;
-  setConfig?: (obj: any) => void;
 }
 
 export const useDefaultHueState = () => {
@@ -31,8 +28,6 @@ export const useDefaultHueState = () => {
   );
   const [sensors, setSensors] = React.useState<SensorRootObject>({});
   const [switches, setSwitches] = React.useState<SensorRootObject>({});
-  const [scenes, setScenes] = React.useState<any>({});
-  const [config, setConfig] = React.useState<any>({});
   return {
     baseUrl,
     setBaseUrl,
@@ -44,8 +39,6 @@ export const useDefaultHueState = () => {
     setSensors,
     switches,
     setSwitches,
-    config,
-    setConfig,
   };
 };
 
@@ -60,16 +53,13 @@ const _refresh = (state: IHueState, baseUrl: string) => {
   state.setSensors &&
     state.setSwitches &&
     fetchSensorsAndSwitches(baseUrl, state.setSensors, state.setSwitches);
-  state.setConfig && fetchConfig(baseUrl, state.setConfig);
 };
 
 export const disconnect = (state: IHueState) => {
   localStorage.clear();
   state.setBaseUrl && state.setBaseUrl("");
   state.setUsername && state.setUsername("");
-  state.setScenes && state.setScenes({});
   state.setSensors && state.setSensors({});
-  state.setConfig && state.setConfig({});
 };
 
 export const refresh = (state: IHueState) => {
@@ -101,7 +91,6 @@ export const HueContext = React.createContext<IHueContext>({
     appname: false,
     sensors: {},
     switches: {},
-    config: {},
   },
   refresh: () => {},
   initialize: () => {},
