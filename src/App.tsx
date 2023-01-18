@@ -1,4 +1,4 @@
-import { CssBaseline, ThemeProvider, createMuiTheme } from "@material-ui/core";
+import { CssBaseline, ThemeProvider, createTheme } from "@material-ui/core";
 import {
   HueContext,
   disconnect,
@@ -22,12 +22,12 @@ function App() {
       initialize(hueState, ip, username, appname),
     disconnect: () => disconnect(hueState),
   };
-  React.useEffect(() => hueContext.refresh(), []);
+  React.useEffect(() => hueContext.refresh(), [hueContext]);
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = React.useMemo(
     () =>
-      createMuiTheme({
+      createTheme({
         palette: {
           type: prefersDarkMode ? "dark" : "light",
         },

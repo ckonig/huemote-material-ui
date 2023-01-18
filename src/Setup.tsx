@@ -163,7 +163,6 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
 
   return (
     <Dialog
-      disableBackdropClick
       disableEscapeKeyDown
       maxWidth="xs"
       aria-labelledby="confirmation-dialog-title"

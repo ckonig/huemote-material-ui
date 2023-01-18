@@ -23,6 +23,7 @@ const roomToFa = (room: string) => {
     case "Balcony":
       return "fa-tree";
     case "Plants":
+    case "Greenhouse":
       return "fa-seedling";
     case "Kitchen":
       return "fa-coffee";
@@ -40,9 +41,9 @@ const iconStyle = {
   width: "auto",
   height: "auto",
   margin: "auto",
-  fontSize: '0.8em',
-  paddingLeft: '10px'
-}
+  fontSize: "0.8em",
+  paddingLeft: "10px",
+};
 
 const FooterChip = (props: {
   icon: string;
@@ -138,7 +139,7 @@ const Sensor = (props: { model: any }) => {
           {props.model.light && (
             <Box>
               <FooterChip
-                icon={props.model.light?.state.dark? "moon" : "sun"}
+                icon={props.model.light?.state.dark ? "moon" : "sun"}
                 label={props.model.light?.state?.lightlevel}
                 opacity={parseInt(props.model.light?.state?.lightlevel) / 33000}
               />
