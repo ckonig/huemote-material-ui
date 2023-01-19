@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { RawLightsResponse } from "../clip/v1/lights";
 import { useHueContext } from "../HueContext";
@@ -8,7 +8,7 @@ const useLights = () => {
     state: { baseUrl },
   } = useHueContext();
   const queryClient = useQueryClient();
-  const initialData = {} as RawLightsResponse;
+  const initialData = useMemo(() => ({} as RawLightsResponse), []);
   const query = useQuery<RawLightsResponse, any>(`${baseUrl}/lights`, {
     queryFn: async () => {
       const response = await fetch(`${baseUrl}/lights`);
@@ -20,32 +20,42 @@ const useLights = () => {
     initialData,
   });
 
-  const refreshLights = () =>
-    queryClient.invalidateQueries({ queryKey: `${baseUrl}/lights` });
+  const refreshLights = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: `${baseUrl}/lights` }),
+    [baseUrl, queryClient]
+  );
 
-  const setBrightness = async (key: string, newval: number) => {
-    await fetch(`${baseUrl}/lights/${key}/state`, {
-      method: "put",
-      body: JSON.stringify({ bri: newval }),
-    });
-    refreshLights();
-  };
+  const putJson = useCallback(
+    (url, body) =>
+      fetch(url, {
+        method: "put",
+        body: JSON.stringify(body),
+      }),
+    []
+  );
 
-  const toggle = async (light: any) => {
-    await fetch(`${baseUrl}/lights/${light.key}/state`, {
-      method: "put",
-      body: JSON.stringify({ on: !light.state.on }),
-    });
-    refreshLights();
-  };
+  const setBrightness = useCallback(
+    async (key: number, newval: number) => {
+      await putJson(`${baseUrl}/lights/${key}/state`, { bri: newval });
+      refreshLights();
+    },
+    [baseUrl, refreshLights, putJson]
+  );
 
-  const shutDown = async () => {
-    await fetch(`${baseUrl}/groups/0/action`, {
-      method: "put",
-      body: JSON.stringify({ on: false }),
-    });
+  const toggle = useCallback(
+    async (light: any) => {
+      await putJson(`${baseUrl}/lights/${light.key}/state`, {
+        on: !light.state.on,
+      });
+      refreshLights();
+    },
+    [baseUrl, refreshLights, putJson]
+  );
+
+  const shutDown = useCallback(async () => {
+    await putJson(`${baseUrl}/groups/0/action`, { on: false });
     refreshLights();
-  };
+  }, [baseUrl, refreshLights, putJson]);
 
   return useMemo(
     () => ({

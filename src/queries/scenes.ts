@@ -1,14 +1,16 @@
 import { useHueContext } from "../HueContext";
 import { useQuery, useQueryClient } from "react-query";
 import { useCallback, useMemo } from "react";
+import { ScenesReponse } from "../clip/v1/scenes";
+import { Scene } from "../domain/models";
 
 const useScenes = () => {
   const queryClient = useQueryClient();
   const {
     state: { baseUrl },
   } = useHueContext();
-  const initialData = {} as any;
-  const query = useQuery<any, any>(`${baseUrl}/scenes`, {
+  const initialData = useMemo(() => ({} as ScenesReponse), []);
+  const query = useQuery<ScenesReponse, any>(`${baseUrl}/scenes`, {
     queryFn: async () => {
       const response = await fetch(`${baseUrl}/scenes`);
       if (!response.ok) {
@@ -20,16 +22,16 @@ const useScenes = () => {
   });
 
   const activate = useCallback(
-    async (scene: any, id: string) => {
-      const payload = { scene: scene.key };
-      await fetch(`${baseUrl}/groups/${id}/action`, {
+    async (scene: Scene) => {
+      const payload = { scene: scene.id };
+      await fetch(`${baseUrl}/groups/${scene.group}/action`, {
         method: "put",
         body: JSON.stringify(payload),
       });
       queryClient.invalidateQueries({ queryKey: `${baseUrl}/scenes` });
       //@todo update lights and rooms?
     },
-    [baseUrl]
+    [baseUrl, queryClient]
   );
 
   return useMemo(
@@ -37,7 +39,7 @@ const useScenes = () => {
       scenes: query.data || initialData,
       activate,
     }),
-    [initialData, query]
+    [initialData, query, activate]
   );
 };
 export default useScenes;

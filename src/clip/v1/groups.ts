@@ -1,12 +1,12 @@
-export interface GroupsResponseObj {
+export interface GroupsResponseObj<T, F> {
   class: string;
-  lights: string[];
+  lights: T[];
   name: string;
-  sensors: any[];
+  sensors: F[];
   type: string;
   state: any;
 }
 
 export type GroupsResponse = {
-  [name: number]: GroupsResponseObj;
+  [name: number]: GroupsResponseObj<string, any>;
 };

@@ -1,6 +1,5 @@
-import { createBaseUrl } from "./API";
-
 import React from "react";
+import { createBaseUrl } from "./clip/v1/createBaseUrl";
 
 export interface IHueState {
   baseUrl: string | false;
