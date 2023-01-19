@@ -7,7 +7,7 @@ const useConfig = () => {
   const {
     state: { baseUrl },
   } = useHueContext();
-  const initialData = {} as Config;
+  const initialData = useMemo(() => ({} as Config), []);
   const query = useQuery<Config, any>(`${baseUrl}/config`, {
     queryFn: async () => {
       const response = await fetch(`${baseUrl}/config`);

@@ -12,7 +12,6 @@ import Switches from "./Switches";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import Tabs from "@material-ui/core/Tabs";
-import { useHueContext } from "./HueContext";
 
 const tabs = [
   { icon: "fa-photo-video", label: "Scenes", route: "/Scenes" },
@@ -29,8 +28,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 function TabNav(props: RouteComponentProps<any>) {
-  const { refresh } = useHueContext();
-
   const getPathIndex = React.useCallback(() => {
     const found = tabs.findIndex((t) => t.route === props.location.pathname);
     return found > 0 ? found : 0;
@@ -38,12 +35,12 @@ function TabNav(props: RouteComponentProps<any>) {
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     props.history.push(tabs[newValue].route);
-    //refresh();
+    //@todo refresh
   };
 
   const handleSwipeTab = (newValue: number) => {
     props.history.push(tabs[newValue].route);
-    //refresh();
+    //@todo refresh
   };
 
   const classes = useStyles();

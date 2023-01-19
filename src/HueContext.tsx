@@ -1,7 +1,6 @@
 import { createBaseUrl } from "./API";
 
 import React from "react";
-import { SensorRootObject } from "./clip/v1/sensors";
 
 export interface IHueState {
   baseUrl: string | false;

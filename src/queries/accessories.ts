@@ -1,9 +1,9 @@
 import { useHueContext } from "../HueContext";
 import { useQuery } from "react-query";
 import { useMemo } from "react";
-import { SensorRootObject } from "../clip/v1/sensors";
+import { SensorRootObject, SENSOR_TYPES } from "../clip/v1/sensors";
 
-//@todo merge these two functions
+//@todo map to devices instead
 const groupSwitchesById = (switches: any) => {
   const dict: { [name: string]: any } = {};
   Object.keys(switches)
@@ -17,7 +17,10 @@ const groupSwitchesById = (switches: any) => {
             dict[sensorGroupId] = {};
           }
         };
-        if (sensor.type === "ZLLSwitch") {
+        if (
+          sensor.type === SENSOR_TYPES.DimmerSwitch ||
+          sensor.type === SENSOR_TYPES.TapSwitch
+        ) {
           create();
           dict[sensorGroupId].model = sensor;
           dict[sensorGroupId].switch = sensor;
@@ -28,6 +31,7 @@ const groupSwitchesById = (switches: any) => {
   return dict;
 };
 
+//@todo map to devices instead
 const groupSensorsById = (sensors: any) => {
   const dict: { [name: string]: any } = {};
   Object.keys(sensors)
@@ -41,15 +45,19 @@ const groupSensorsById = (sensors: any) => {
             dict[sensorGroupId] = {};
           }
         };
-        if (sensor.type === "ZLLTemperature") {
+
+        //@todo exclude CLIPGenericStatus sensors
+        //@todo ignore DayLightSensor
+
+        if (sensor.type === SENSOR_TYPES.Temperature) {
           create();
           dict[sensorGroupId].temperature = sensor;
         }
-        if (sensor.type === "ZLLLightLevel") {
+        if (sensor.type === SENSOR_TYPES.LightLevel) {
           create();
           dict[sensorGroupId].light = sensor;
         }
-        if (sensor.type === "ZLLPresence") {
+        if (sensor.type === SENSOR_TYPES.Presence) {
           create();
           dict[sensorGroupId].model = sensor;
           dict[sensorGroupId].name = sensor.name;
@@ -64,7 +72,7 @@ const useAccessories = () => {
   const {
     state: { baseUrl },
   } = useHueContext();
-  const initialData = {} as SensorRootObject;
+  const initialData = useMemo(() => ({} as SensorRootObject), []);
   const query = useQuery<SensorRootObject, any>(`${baseUrl}/sensors`, {
     queryFn: async () => {
       const response = await fetch(`${baseUrl}/sensors`);

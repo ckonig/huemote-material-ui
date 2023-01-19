@@ -1,4 +1,4 @@
-export interface SensorObject {
+export interface Sensor {
   key: string;
   state: State;
   config: Config;
@@ -15,8 +15,25 @@ export interface SensorObject {
   capabilities: Capabilities;
 }
 
+export const SENSOR_TYPES = {
+  Daylight: "Daylight",
+  LightLevel: "ZLLLightLevel",
+  Temperature: "ZLLTemperature",
+  Presence: "ZLLPresence",
+  Generic: "CLIPGenericStatus",
+  TapSwitch: "ZGPSwitch",
+  DimmerSwitch: "ZLLSwitch",
+};
+
+//keep the enum
+//sensors must be merged into devices
+//invent the device model with its specific incarnations
+//Motion Detector with Presence Sensor and Temperature Sensor
+//Dimmer Switch and Tap Switch
+//keep the interface expandable
+
 export interface SensorRootObject {
-  [id: string]: SensorObject;
+  [id: string]: Sensor;
 }
 
 export interface Capabilities {
@@ -43,28 +60,28 @@ export interface Event {
 export interface Config {
   on: boolean;
   configured: boolean;
-  sunriseoffset: number;
-  sunsetoffset: number;
-  reachable?: boolean;
   battery?: number;
   pending: any[];
-  alert: string;
-  ledindication?: boolean;
+  reachable?: boolean;
   usertest?: boolean;
+  sunriseoffset: number;
+  sunsetoffset: number;
   sensitivity?: number;
   sensitivitymax?: number;
+  alert: string;
+  ledindication?: boolean;
   tholddark?: number;
   tholdoffset?: number;
 }
 
 export interface State {
-  daylight: boolean;
   lastupdated: any;
   flag?: boolean;
-  presence?: boolean;
-  buttonevent?: number;
   status?: number;
-  temperature?: number;
-  lightlevel?: number;
   dark?: boolean;
+  presence: boolean;
+  temperature: number;
+  daylight: boolean;
+  lightlevel: number;
+  buttonevent: number;
 }

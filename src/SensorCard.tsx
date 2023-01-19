@@ -9,7 +9,9 @@ import {
 
 import Battery from "./Battery";
 import React from "react";
+import { Sensor as AbstractSensor } from "./clip/v1/sensors";
 
+//@todo move to json
 const roomToFa = (room: string) => {
   switch (room) {
     case "Living":
@@ -18,6 +20,7 @@ const roomToFa = (room: string) => {
     case "Bathroom":
     case "Bath":
       return "fa-toilet-paper";
+    case "Bed":
     case "Bedroom":
       return "fa-bed";
     case "Balcony":
@@ -47,7 +50,7 @@ const iconStyle = {
 
 const FooterChip = (props: {
   icon: string;
-  label: string;
+  label: number | string;
   opacity?: number;
 }) => {
   return (
@@ -74,17 +77,26 @@ const toUtc = (date: any) => {
   return now_utc;
 };
 
-const Sensor = (props: { model: any }) => {
+const Sensor = (props: {
+  //@todo use Device class
+  model: {
+    model: AbstractSensor;
+    light: AbstractSensor;
+    temperature: AbstractSensor;
+    presence: AbstractSensor;
+    switch: AbstractSensor;
+  };
+}) => {
   //@todo use bridge-timezone from API to correct calculation?
   const diffToNow = React.useCallback(() => {
     if (!props.model.model) return null;
     const then = new Date(props.model?.model?.state?.lastupdated);
+
     const now_utc = toUtc(new Date(Date.now()));
     const diff = now_utc - toUtc(then);
-
+    //@todo why utc doesn't work? remove - 60 minutes hack
     const roundedMinutes = Math.floor(diff / 1000 / 60) - 60;
 
-    //@todo why utc doesn't work? remove - 60 minutes hack
     if (roundedMinutes >= 60) {
       const hours = Math.floor(roundedMinutes / 60);
       if (hours > 24) {
@@ -93,7 +105,6 @@ const Sensor = (props: { model: any }) => {
       }
       return hours + " hours ago";
     }
-    //@todo more than x days ago
     if (roundedMinutes === 0) {
       return "now";
     }
@@ -108,6 +119,7 @@ const Sensor = (props: { model: any }) => {
     if (buttonevent === 2002) return "dim +";
     if (buttonevent === 3002) return "dim -";
     if (buttonevent === 4002) return "off";
+    //@todo map tap switch button events
     return "";
   };
 
@@ -122,7 +134,7 @@ const Sensor = (props: { model: any }) => {
         }
         title={props.model.model.name}
         action={
-          props.model?.model?.config ? (
+          props.model?.model?.config?.battery ? (
             <Battery level={props.model.model.config.battery} />
           ) : null
         }
@@ -136,29 +148,26 @@ const Sensor = (props: { model: any }) => {
           justifyContent="space-between"
           alignContent="center"
         >
-          {props.model.light && (
+          {props.model.light?.state?.lightlevel && (
             <Box>
               <FooterChip
                 icon={props.model.light?.state.dark ? "moon" : "sun"}
                 label={props.model.light?.state?.lightlevel}
-                opacity={parseInt(props.model.light?.state?.lightlevel) / 33000}
+                opacity={props.model.light?.state?.lightlevel / 33000}
               />
             </Box>
           )}
-          {props.model.temperature && (
+          {props.model.temperature?.state?.temperature && (
             <Box>
               <FooterChip
                 icon="thermometer"
-                label={
-                  props.model.temperature &&
-                  `${(props.model.temperature.state.temperature / 100).toFixed(
-                    2
-                  )}°C`
-                }
+                label={`${(
+                  props.model.temperature.state.temperature / 100
+                ).toFixed(2)}°C`}
               />
             </Box>
           )}
-          {props.model.presence && (
+          {props.model.presence?.state && (
             <Box>
               {props.model.presence?.state?.presence && (
                 <FooterChip icon="eye" label="Presence" />

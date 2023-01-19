@@ -15,6 +15,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import React from "react";
 import generateUID from "./generateUID";
 import { useHueContext } from "./HueContext";
+import { getStepTitle, Steps } from "./useSteps";
 
 export interface ConfirmationDialogRawProps {
   classes: Record<"paper", string>;
@@ -53,19 +54,7 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
   const [ip, setIp] = React.useState<string>("");
 
   const getTitle = React.useCallback(() => {
-    if (props.step === Steps.START) {
-      return "Setup";
-    }
-    if (props.step === Steps.CONSENT) {
-      return "Data Storage";
-    }
-    if (props.step === Steps.BRIDGE) {
-      return "Hue Bridge";
-    }
-    if (props.step === Steps.CONNECT) {
-      return "Finish";
-    }
-    return null;
+    return getStepTitle(props.step);
   }, [props]);
 
   const handleOk = React.useCallback(() => {
@@ -199,12 +188,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-const Steps = {
-  START: 0,
-  CONSENT: 1,
-  BRIDGE: 2,
-  CONNECT: 3,
-};
 
 export default function ConfirmationDialog() {
   const classes = useStyles();

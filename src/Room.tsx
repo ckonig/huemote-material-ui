@@ -1,27 +1,11 @@
 import { Box, Grid, Icon, Switch, Typography } from "@material-ui/core";
-
 import AccordionSummary from "./AccordionSummary";
-import React from "react";
 import { hueToFa } from "./HueIcon";
-import { useHueContext } from "./HueContext";
+import { GroupsResponseObj } from "./clip/v1/groups";
+import useGroups from "./queries/groups";
 
-const Room = (props: { elem: any }) => {
-  const { elem } = props;
-  const {
-    state: { baseUrl },
-    refresh,
-  } = useHueContext();
-  const toggleRoom = React.useCallback(
-    (elem: any) => {
-      const payload = { on: !elem.state.any_on };
-      //@todo move to api
-      fetch(`${baseUrl}/groups/${elem.key}/action`, {
-        method: "put",
-        body: JSON.stringify(payload),
-      }).then(() => refresh());
-    },
-    [refresh, baseUrl]
-  );
+const Room = ({ elem }: { elem: GroupsResponseObj }) => {
+  const { toggle } = useGroups();
   return (
     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
       <Grid style={{ width: "100%" }} container>
@@ -35,7 +19,7 @@ const Room = (props: { elem: any }) => {
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => {
               e.stopPropagation();
-              toggleRoom(elem);
+              toggle(elem);
             }}
             color="primary"
             inputProps={{ "aria-label": "primary checkbox" }}

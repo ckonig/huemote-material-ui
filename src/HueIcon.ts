@@ -1,4 +1,5 @@
 export const hueToFa = (hue: string) => {
+  //@todo move to json config
   switch (hue) {
     case "Living room":
       return "fa-tv";
