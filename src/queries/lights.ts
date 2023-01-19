@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { RawLightsResponse } from "../clip/v1/lights";
+import { Light } from "../domain/models";
 import { useHueContext } from "../HueContext";
 
 const useLights = () => {
@@ -10,6 +11,7 @@ const useLights = () => {
   const queryClient = useQueryClient();
   const initialData = useMemo(() => ({} as RawLightsResponse), []);
   const query = useQuery<RawLightsResponse, any>(`${baseUrl}/lights`, {
+    cacheTime: 10,
     queryFn: async () => {
       const response = await fetch(`${baseUrl}/lights`);
       if (!response.ok) {
@@ -21,7 +23,7 @@ const useLights = () => {
   });
 
   const refreshLights = useCallback(
-    () => queryClient.invalidateQueries({ queryKey: `${baseUrl}/lights` }),
+    () => queryClient.refetchQueries({ queryKey: `${baseUrl}/lights` }),
     [baseUrl, queryClient]
   );
 
@@ -43,8 +45,8 @@ const useLights = () => {
   );
 
   const toggle = useCallback(
-    async (light: any) => {
-      await putJson(`${baseUrl}/lights/${light.key}/state`, {
+    async (light: Light) => {
+      await putJson(`${baseUrl}/lights/${light.id}/state`, {
         on: !light.state.on,
       });
       refreshLights();

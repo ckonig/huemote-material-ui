@@ -28,8 +28,7 @@ const useScenes = () => {
         method: "put",
         body: JSON.stringify(payload),
       });
-      queryClient.invalidateQueries({ queryKey: `${baseUrl}/scenes` });
-      //@todo update lights and rooms?
+      queryClient.refetchQueries();
     },
     [baseUrl, queryClient]
   );

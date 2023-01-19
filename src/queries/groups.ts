@@ -11,6 +11,7 @@ const useGroups = () => {
   } = useHueContext();
   const initialData = useMemo(() => ({} as GroupsResponse), []);
   const query = useQuery<GroupsResponse, any>(`${baseUrl}/groups`, {
+    cacheTime: 10,
     queryFn: async () => {
       const response = await fetch(`${baseUrl}/groups`);
       if (!response.ok) {

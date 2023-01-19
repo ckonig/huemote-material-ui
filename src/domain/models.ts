@@ -24,7 +24,7 @@ export const useRooms = () => {
   const { groups } = useGroups();
   const { lights } = useLights();
   const { scenes } = useScenes();
-  return useMemo(
+  return useMemo<Room[]>(
     () =>
       Object.keys(groups)
         .map((k) => parseInt(k))
