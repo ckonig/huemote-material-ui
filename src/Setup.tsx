@@ -35,6 +35,10 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
     if (!open) setUID(generateUID);
   }, [open]);
 
+  const [ip, setIp] = React.useState<string>("");
+
+  const { initialize, state } = useHueContext();
+
   //
   React.useEffect(() => {
     if (props.step === Steps.BRIDGE && !ip && !state.baseUrl) {
@@ -46,12 +50,9 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
           }
         });
     }
-  }, [props.step]);
-
-  const { initialize, state } = useHueContext();
+  }, [props.step, ip, state.baseUrl]);
 
   const [consent, setConsent] = React.useState<boolean>(false);
-  const [ip, setIp] = React.useState<string>("");
 
   const getTitle = React.useCallback(() => {
     return getStepTitle(props.step);
