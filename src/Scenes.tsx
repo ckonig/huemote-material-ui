@@ -23,7 +23,7 @@ const Scenes = () => {
     <>
       {rooms.map((room) => (
         <Accordion
-          key={room.name}
+          key={room.id}
           square
           expanded={expanded === room.id}
           onChange={(e, newExpanded) =>
@@ -41,7 +41,7 @@ const Scenes = () => {
               }}
             >
               {room.scenes.map((scene) => (
-                <>
+                <React.Fragment key={scene.id}>
                   <ListItem
                     key={scene.id}
                     style={{
@@ -66,7 +66,7 @@ const Scenes = () => {
                     </Box>
                   </ListItem>
                   <Divider style={{ marginBottom: 13, marginTop: 14 }} />
-                </>
+                </React.Fragment>
               ))}
             </List>
           </AccordionDetails>
