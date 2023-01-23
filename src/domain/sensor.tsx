@@ -14,6 +14,26 @@ export interface Sensor {
   presence: SensorObject;
 }
 
+export interface Switch {
+  deviceid: string;
+  switch: SensorObject;
+}
+
+export const useSwitches = () => {
+  const { accessories } = useAccessories();
+  return useMemo<{ switches: Switch[] }>(
+    () => ({
+      switches: filterByType(accessories, SENSOR_TYPES.DimmerSwitch)
+        .concat(filterByType(accessories, SENSOR_TYPES.TapSwitch))
+        .map((s) => ({
+          deviceid: s.uniqueid.substring(0, 26),
+          switch: s,
+        })),
+    }),
+    [accessories]
+  );
+};
+
 export const useSensors = () => {
   const { accessories } = useAccessories();
   return useMemo<{ sensors: Sensor[] }>(

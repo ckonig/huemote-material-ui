@@ -1,5 +1,5 @@
 export interface SensorObject {
-  key: string;
+  //key: string;
   state: State;
   config: Config;
   name: string;

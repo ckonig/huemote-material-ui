@@ -13,9 +13,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import React from "react";
-import generateUID from "./generateUID";
-import { useHueContext } from "./HueContext";
-import { getStepTitle, Steps } from "./useSteps";
+import generateUID from "../generateUID";
+import { useHueContext } from "../HueContext";
+import { getStepTitle, Steps } from "../useSteps";
 
 export interface ConfirmationDialogRawProps {
   classes: Record<"paper", string>;
@@ -39,7 +39,7 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
 
   const { initialize, state } = useHueContext();
 
-  //
+  //@todo move to API
   React.useEffect(() => {
     if (props.step === Steps.BRIDGE && !ip && !state.baseUrl) {
       fetch("https://discovery.meethue.com/")
@@ -58,6 +58,7 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
     return getStepTitle(props.step);
   }, [props]);
 
+  //@todo move to API
   const handleOk = React.useCallback(() => {
     if (props.step === Steps.CONNECT && consent && ip) {
       fetch(`http://${ip}/api`, {
@@ -192,23 +193,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ConfirmationDialog() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [state, setState] = React.useState({ open: true, step: Steps.START });
   const {
     state: { baseUrl },
   } = useHueContext();
 
   React.useEffect(() => {
-    if (!baseUrl && !open) {
-      setStep(Steps.START);
-      setOpen(true);
+    if (!baseUrl && !state.open) {
+      setState({ step: Steps.START, open: true });
     }
-  }, [baseUrl, open]);
-
-  const handleClose = (newValue?: string) => {
-    setOpen(false);
-  };
-
-  const [step, setStep] = React.useState(Steps.START);
+  }, [baseUrl, state]);
 
   return (
     <ConfirmationDialogRaw
@@ -217,10 +211,10 @@ export default function ConfirmationDialog() {
       }}
       id="ringtone-menu"
       keepMounted
-      step={step}
-      next={() => setStep(step + 1)}
-      open={open}
-      onClose={handleClose}
+      step={state.step}
+      next={() => setState({ ...state, step: state.step + 1 })}
+      open={state.open}
+      onClose={() => setState({ ...state, open: false })}
     />
   );
 }

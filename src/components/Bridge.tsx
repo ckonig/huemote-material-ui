@@ -3,11 +3,10 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import { Icon } from "@material-ui/core";
-import React from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHueContext } from "./HueContext";
-import useConfig from "./queries/config";
+import { useHueContext } from "../HueContext";
+import useConfig from "../queries/config";
 
 const useCardStyles = makeStyles({
   root: {

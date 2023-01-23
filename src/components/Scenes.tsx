@@ -11,8 +11,8 @@ import {
 import Accordion from "./Accordion";
 import React from "react";
 import Room from "./Room";
-import useScenes from "./queries/scenes";
-import { useRooms } from "./domain/room";
+import useScenes from "../queries/scenes";
+import { useRooms } from "../domain/room";
 
 const Scenes = () => {
   const [expanded, setExpanded] = React.useState<number | false>(false);

@@ -7,9 +7,9 @@ import {
 } from "./HueContext";
 
 import { BrowserRouter } from "react-router-dom";
-import ConfirmationDialog from "./Setup";
+import ConfirmationDialog from "./components/Setup";
 import React from "react";
-import TabNav from "./TabNav";
+import TabNav from "./components/TabNav";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { QueryClient, QueryClientProvider } from "react-query";
 

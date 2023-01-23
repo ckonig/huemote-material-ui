@@ -1,35 +1,7 @@
 import { useHueContext } from "../HueContext";
 import { useQuery } from "react-query";
 import { useMemo } from "react";
-import { SensorRootObject, SENSOR_TYPES } from "../clip/v1/sensors";
-
-//@todo map to devices instead
-const groupSwitchesById = (switches: any) => {
-  const dict: { [name: string]: any } = {};
-  Object.keys(switches)
-    .map((key) => switches[parseInt(key)])
-    .forEach((sensor) => {
-      if (sensor && sensor.uniqueid) {
-        const sensorGroupId = sensor.uniqueid.substring(0, 26);
-
-        const create = () => {
-          if (!dict[sensorGroupId]) {
-            dict[sensorGroupId] = {};
-          }
-        };
-        if (
-          sensor.type === SENSOR_TYPES.DimmerSwitch ||
-          sensor.type === SENSOR_TYPES.TapSwitch
-        ) {
-          create();
-          dict[sensorGroupId].model = sensor;
-          dict[sensorGroupId].switch = sensor;
-        }
-      }
-    });
-
-  return dict;
-};
+import { SensorRootObject } from "../clip/v1/sensors";
 
 const useAccessories = () => {
   const {
@@ -50,7 +22,6 @@ const useAccessories = () => {
   return useMemo(
     () => ({
       accessories: query.data || initialData,
-      switches: groupSwitchesById(query.data || initialData),
     }),
     [initialData, query]
   );
