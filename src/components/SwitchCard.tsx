@@ -7,9 +7,9 @@ import {
   Icon,
 } from "@material-ui/core";
 
-import Battery from "./Battery";
+import { SensorObject as AbstractSensor } from "../clip/v1/sensors";
 import React from "react";
-import { Sensor as AbstractSensor } from "./domain/sensor";
+import Battery from "../Battery";
 
 //@todo move to json
 const roomToFa = (room: string) => {
@@ -77,11 +77,20 @@ const toUtc = (date: any) => {
   return now_utc;
 };
 
-const Sensor = ({ model }: { model: AbstractSensor }) => {
+const Switch = (props: {
+  //@todo use Device class
+  model: {
+    model: AbstractSensor;
+    light: AbstractSensor;
+    temperature: AbstractSensor;
+    presence: AbstractSensor;
+    switch: AbstractSensor;
+  };
+}) => {
   //@todo use bridge-timezone from API to correct calculation?
   const diffToNow = React.useCallback(() => {
-    if (!model) return null;
-    const then = new Date(model.presence.state?.lastupdated);
+    if (!props.model.model) return null;
+    const then = new Date(props.model?.model?.state?.lastupdated);
 
     const now_utc = toUtc(new Date(Date.now()));
     const diff = now_utc - toUtc(then);
@@ -103,7 +112,7 @@ const Sensor = ({ model }: { model: AbstractSensor }) => {
       return "1 minute ago";
     }
     return roundedMinutes + " minutes ago";
-  }, [model]);
+  }, [props]);
 
   const buttonEventToStr = (buttonevent: number) => {
     if (buttonevent === 1002) return "on";
@@ -120,13 +129,13 @@ const Sensor = ({ model }: { model: AbstractSensor }) => {
         avatar={
           <Icon
             style={{ margin: "auto", width: "auto" }}
-            className={"fa " + roomToFa(model.name.split(" ")[0])}
+            className={"fa " + roomToFa(props.model?.model?.name.split(" ")[0])}
           />
         }
-        title={model.name}
+        title={props.model.model.name}
         action={
-          model.presence.config?.battery ? (
-            <Battery level={model.presence.config.battery} />
+          props.model?.model?.config?.battery ? (
+            <Battery level={props.model.model.config.battery} />
           ) : null
         }
         subheader={diffToNow()}
@@ -139,32 +148,16 @@ const Sensor = ({ model }: { model: AbstractSensor }) => {
           justifyContent="space-between"
           alignContent="center"
         >
-          {model.lightLevel.state?.lightlevel && (
+          {props.model.switch?.state?.buttonevent && (
             <Box>
-              <FooterChip
-                icon={model.lightLevel.state.dark ? "moon" : "sun"}
-                label={model.lightLevel.state?.lightlevel}
-                opacity={model.lightLevel.state?.lightlevel / 33000}
-              />
-            </Box>
-          )}
-          {model.temperature?.state?.temperature && (
-            <Box>
-              <FooterChip
-                icon="thermometer"
-                label={`${(model.temperature.state.temperature / 100).toFixed(
-                  2
-                )}°C`}
-              />
-            </Box>
-          )}
-          {model.presence?.state && (
-            <Box>
-              {model.presence?.state?.presence && (
-                <FooterChip icon="eye" label="Presence" />
-              )}
-              {!model.presence?.state?.presence && (
-                <FooterChip icon="eye-slash" label="No presence" />
+              {props.model.switch?.state?.buttonevent && (
+                <FooterChip
+                  icon="hand-point-down"
+                  label={
+                    "last button pressed: " +
+                    buttonEventToStr(props.model.switch?.state?.buttonevent)
+                  }
+                />
               )}
             </Box>
           )}
@@ -174,4 +167,4 @@ const Sensor = ({ model }: { model: AbstractSensor }) => {
   );
 };
 
-export default Sensor;
+export default Switch;

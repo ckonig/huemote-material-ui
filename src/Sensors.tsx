@@ -1,16 +1,14 @@
 import { Paper } from "@material-ui/core";
+import { useSensors } from "./domain/sensor";
 import Sensor from "./SensorCard";
-import useAccessories from "./queries/accessories";
 
 const Sensors = () => {
-  const { sensors } = useAccessories();
+  const { sensors } = useSensors();
   return (
     <Paper placeholder="loading">
-      {Object.keys(sensors)
-        .map((key) => sensors[key])
-        .map((sensor, si) => (
-          <Sensor key={si} model={sensor} />
-        ))}
+      {sensors.map((sensor) => (
+        <Sensor key={sensor.deviceid} model={sensor} />
+      ))}
     </Paper>
   );
 };

@@ -31,43 +31,6 @@ const groupSwitchesById = (switches: any) => {
   return dict;
 };
 
-//@todo map to devices instead
-const groupSensorsById = (sensors: any) => {
-  const dict: { [name: string]: any } = {};
-  Object.keys(sensors)
-    .map((key) => sensors[parseInt(key)])
-    .forEach((sensor) => {
-      if (sensor && sensor.uniqueid) {
-        const sensorGroupId = sensor.uniqueid.substring(0, 26);
-
-        const create = () => {
-          if (!dict[sensorGroupId]) {
-            dict[sensorGroupId] = {};
-          }
-        };
-
-        //@todo exclude CLIPGenericStatus sensors
-        //@todo ignore DayLightSensor
-
-        if (sensor.type === SENSOR_TYPES.Temperature) {
-          create();
-          dict[sensorGroupId].temperature = sensor;
-        }
-        if (sensor.type === SENSOR_TYPES.LightLevel) {
-          create();
-          dict[sensorGroupId].light = sensor;
-        }
-        if (sensor.type === SENSOR_TYPES.Presence) {
-          create();
-          dict[sensorGroupId].model = sensor;
-          dict[sensorGroupId].name = sensor.name;
-          dict[sensorGroupId].presence = sensor;
-        }
-      }
-    });
-  return dict;
-};
-
 const useAccessories = () => {
   const {
     state: { baseUrl },
@@ -86,7 +49,7 @@ const useAccessories = () => {
 
   return useMemo(
     () => ({
-      sensors: groupSensorsById(query.data || initialData),
+      accessories: query.data || initialData,
       switches: groupSwitchesById(query.data || initialData),
     }),
     [initialData, query]

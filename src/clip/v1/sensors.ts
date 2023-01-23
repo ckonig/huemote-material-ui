@@ -1,4 +1,4 @@
-export interface Sensor {
+export interface SensorObject {
   key: string;
   state: State;
   config: Config;
@@ -33,7 +33,7 @@ export const SENSOR_TYPES = {
 //keep the interface expandable
 
 export interface SensorRootObject {
-  [id: string]: Sensor;
+  [id: string]: SensorObject;
 }
 
 export interface Capabilities {

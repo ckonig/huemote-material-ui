@@ -1,6 +1,6 @@
 import { Paper } from "@material-ui/core";
-import Sensor from "./SensorCard";
 import useAccessories from "./queries/accessories";
+import Switch from "./components/SwitchCard";
 
 const Switches = () => {
   const { switches } = useAccessories();
@@ -9,7 +9,7 @@ const Switches = () => {
       {Object.keys(switches)
         .map((key) => switches[key])
         .map((sensor, si) => (
-          <Sensor key={si} model={sensor} />
+          <Switch key={si} model={sensor} />
         ))}
     </Paper>
   );
