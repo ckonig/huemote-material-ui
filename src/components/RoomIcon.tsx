@@ -1,4 +1,7 @@
-export const hueToFa = (hue: string) => {
+import { Icon } from "@material-ui/core";
+import { Room } from "../domain/models";
+
+export const hueClassToFaIcon = (hue: string) => {
   //@todo move to json config
   switch (hue) {
     case "Living room":
@@ -20,3 +23,14 @@ export const hueToFa = (hue: string) => {
   }
   console.error("no icon for class:" + hue);
 };
+
+const RoomIcon = ({ room }: { room: Room }) => {
+  return (
+    <Icon
+      className={`fa ${hueClassToFaIcon(room.class)}`}
+      style={{ width: 45 }}
+    />
+  );
+};
+
+export default RoomIcon;
