@@ -1,12 +1,10 @@
-import { useHueContext } from "../HueContext";
 import { useQuery } from "react-query";
 import { useMemo } from "react";
 import { SensorRootObject } from "../clip/v1/sensors";
+import { useConnection } from "./setup";
 
 const useAccessories = () => {
-  const {
-    state: { baseUrl },
-  } = useHueContext();
+  const { baseUrl } = useConnection();
   const initialData = useMemo(() => ({} as SensorRootObject), []);
   const query = useQuery<SensorRootObject, any>(`${baseUrl}/sensors`, {
     queryFn: async () => {

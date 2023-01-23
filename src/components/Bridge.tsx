@@ -5,8 +5,8 @@ import CardContent from "@material-ui/core/CardContent";
 import { Icon } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHueContext } from "../HueContext";
 import useConfig from "../queries/config";
+import { useConnection } from "../queries/setup";
 
 const useCardStyles = makeStyles({
   root: {
@@ -25,10 +25,7 @@ const useCardStyles = makeStyles({
 });
 
 const Bridge = () => {
-  const {
-    state: { appname },
-    disconnect,
-  } = useHueContext();
+  const { appname, disconnect } = useConnection();
   const { config } = useConfig();
   const cardClasses = useCardStyles();
   return (

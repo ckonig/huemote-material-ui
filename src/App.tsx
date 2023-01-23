@@ -1,29 +1,15 @@
 import { CssBaseline, ThemeProvider, createTheme } from "@material-ui/core";
-import {
-  HueContext,
-  disconnect,
-  initialize,
-  useDefaultHueState,
-} from "./HueContext";
-
 import { BrowserRouter } from "react-router-dom";
 import ConfirmationDialog from "./components/setup/Setup";
-import React from "react";
+import { useMemo } from "react";
 import TabNav from "./components/TabNav";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 function App() {
-  const hueState = useDefaultHueState();
-  const hueContext = {
-    state: hueState,
-    initialize: (ip: string, username: string, appname: string) =>
-      initialize(hueState, ip, username, appname),
-    disconnect: () => disconnect(hueState),
-  };
-
+  const queryClient = useMemo(() => new QueryClient(), []);
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const theme = React.useMemo(
+  const theme = useMemo(
     () =>
       createTheme({
         palette: {
@@ -32,18 +18,14 @@ function App() {
       }),
     [prefersDarkMode]
   );
-  const queryClient = new QueryClient();
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <HueContext.Provider value={hueContext}>
-          <BrowserRouter>
-            {hueContext.state.baseUrl && <TabNav />}
-            <ConfirmationDialog />
-          </BrowserRouter>
-        </HueContext.Provider>
+        <BrowserRouter>
+          <TabNav />
+          <ConfirmationDialog />
+        </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>
   );

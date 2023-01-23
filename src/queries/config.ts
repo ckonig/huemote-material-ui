@@ -1,12 +1,10 @@
-import { useHueContext } from "../HueContext";
 import { useQuery } from "react-query";
 import { useMemo } from "react";
 import { Config } from "../clip/v1/config";
+import { useConnection } from "./setup";
 
 const useConfig = () => {
-  const {
-    state: { baseUrl },
-  } = useHueContext();
+  const { baseUrl } = useConnection();
   const initialData = useMemo(() => ({} as Config), []);
   const query = useQuery<Config, any>(`${baseUrl}/config`, {
     queryFn: async () => {

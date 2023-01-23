@@ -14,11 +14,12 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import React from "react";
 import generateUID from "../../generateUID";
-import { useHueContext } from "../../HueContext";
 import { getStepTitle, Steps } from "./useSteps";
-import { useBridgeDiscovery } from "../../queries/setup";
+import { useBridgeDiscovery, useConnection } from "../../queries/setup";
 
 export default function ConfirmationDialog() {
+  const { baseUrl, initialize } = useConnection();
+
   const [state, setState] = React.useState({
     open: true,
     step: Steps.START,
@@ -26,10 +27,6 @@ export default function ConfirmationDialog() {
     ip: "",
     consent: false,
   });
-
-  const {
-    state: { baseUrl },
-  } = useHueContext();
 
   React.useEffect(() => {
     if (!baseUrl && !state.open) {
@@ -41,22 +38,26 @@ export default function ConfirmationDialog() {
     paper: useStyles().paper,
   };
 
-  React.useEffect(() => {
-    if (!state.open) setState({ ...state, UID: generateUID() });
-  }, [state]);
-
-  const { initialize } = useHueContext();
-
   const { bridges } = useBridgeDiscovery();
-
   React.useEffect(() => {
     if (
+      state.open &&
       state.step === Steps.BRIDGE &&
       !state.ip &&
       !baseUrl &&
-      bridges.length
+      !bridges.isFetched
     ) {
-      setState({ ...state, ip: bridges[0].internalipaddress });
+      bridges.refetch();
+      if (
+        bridges.isSuccess &&
+        bridges.data?.length &&
+        bridges.data[0].internalipaddress
+      ) {
+        setState({
+          ...state,
+          ip: bridges.data[0].internalipaddress || "could not retrieve",
+        });
+      }
     }
   }, [state, baseUrl, bridges]);
 
@@ -64,12 +65,12 @@ export default function ConfirmationDialog() {
     return getStepTitle(state.step);
   }, [state.step]);
 
-  //@todo move to API
   const handleOk = React.useCallback(() => {
     const onClose = () => setState({ ...state, open: false });
     const next = () => setState({ ...state, step: state.step + 1 });
+    //@todo move to API
     if (state.step === Steps.CONNECT && state.consent && state.ip) {
-      fetch(`http://${ip}/api`, {
+      fetch(`http://${state.ip}/api`, {
         method: "post",
         body: JSON.stringify({ devicetype: "hue-react#" + state.UID }),
       })
@@ -92,10 +93,10 @@ export default function ConfirmationDialog() {
     if (state.step === Steps.START) {
       next();
     }
-    if (state.step === Steps.CONSENT) {
+    if (state.step === Steps.CONSENT && state.consent) {
       next();
     }
-    if (state.step === Steps.BRIDGE) {
+    if (state.step === Steps.BRIDGE && state.ip) {
       next();
     }
   }, [state, initialize]);

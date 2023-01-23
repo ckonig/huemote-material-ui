@@ -2,12 +2,10 @@ import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { RawLightsResponse } from "../clip/v1/lights";
 import { Light } from "../domain/room";
-import { useHueContext } from "../HueContext";
+import { useConnection } from "./setup";
 
 const useLights = () => {
-  const {
-    state: { baseUrl },
-  } = useHueContext();
+  const { baseUrl } = useConnection();
   const queryClient = useQueryClient();
   const initialData = useMemo(() => ({} as RawLightsResponse), []);
   const query = useQuery<RawLightsResponse, any>(`${baseUrl}/lights`, {
@@ -28,7 +26,7 @@ const useLights = () => {
   );
 
   const putJson = useCallback(
-    (url, body) =>
+    (url: string, body: any) =>
       fetch(url, {
         method: "put",
         body: JSON.stringify(body),

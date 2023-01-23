@@ -1,14 +1,12 @@
-import { useHueContext } from "../HueContext";
 import { useQuery, useQueryClient } from "react-query";
 import { useCallback, useMemo } from "react";
 import { ScenesReponse } from "../clip/v1/scenes";
 import { Scene } from "../domain/room";
+import { useConnection } from "./setup";
 
 const useScenes = () => {
   const queryClient = useQueryClient();
-  const {
-    state: { baseUrl },
-  } = useHueContext();
+  const { baseUrl } = useConnection();
   const initialData = useMemo(() => ({} as ScenesReponse), []);
   const query = useQuery<ScenesReponse, any>(`${baseUrl}/scenes`, {
     queryFn: async () => {

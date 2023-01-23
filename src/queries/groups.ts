@@ -1,14 +1,12 @@
-import { useHueContext } from "../HueContext";
 import { useQuery, useQueryClient } from "react-query";
 import { GroupsResponse } from "../clip/v1/groups";
 import { useCallback, useMemo } from "react";
 import { Room } from "../domain/room";
+import { useConnection } from "./setup";
 
 const useGroups = () => {
   const queryClient = useQueryClient();
-  const {
-    state: { baseUrl },
-  } = useHueContext();
+  const { baseUrl } = useConnection();
   const initialData = useMemo(() => ({} as GroupsResponse), []);
   const query = useQuery<GroupsResponse, any>(`${baseUrl}/groups`, {
     cacheTime: 10,
@@ -22,10 +20,10 @@ const useGroups = () => {
     initialData,
   });
 
-  const refreshGroups = useCallback(
-    () => queryClient.refetchQueries({ queryKey: `${baseUrl}/groups` }),
-    [baseUrl, queryClient]
-  );
+  const refreshGroups = useCallback(() => {
+    queryClient.refetchQueries({ queryKey: `${baseUrl}/groups` });
+    queryClient.refetchQueries({ queryKey: `${baseUrl}/lights` });
+  }, [baseUrl, queryClient]);
 
   const toggle = useCallback(
     async (elem: Room) => {
