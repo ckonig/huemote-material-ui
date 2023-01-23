@@ -1,5 +1,5 @@
 import { Slider } from "@material-ui/core";
-import { Light } from "../domain/models";
+import { Light } from "../domain/room";
 import useLights from "../queries/lights";
 
 export const BrightnessSlider = ({ light }: { light: Light }) => {

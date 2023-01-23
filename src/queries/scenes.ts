@@ -2,7 +2,7 @@ import { useHueContext } from "../HueContext";
 import { useQuery, useQueryClient } from "react-query";
 import { useCallback, useMemo } from "react";
 import { ScenesReponse } from "../clip/v1/scenes";
-import { Scene } from "../domain/models";
+import { Scene } from "../domain/room";
 
 const useScenes = () => {
   const queryClient = useQueryClient();

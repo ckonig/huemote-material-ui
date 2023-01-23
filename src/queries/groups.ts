@@ -2,7 +2,7 @@ import { useHueContext } from "../HueContext";
 import { useQuery, useQueryClient } from "react-query";
 import { GroupsResponse } from "../clip/v1/groups";
 import { useCallback, useMemo } from "react";
-import { Room } from "../domain/models";
+import { Room } from "../domain/room";
 
 const useGroups = () => {
   const queryClient = useQueryClient();

@@ -1,5 +1,5 @@
 import { Switch } from "@material-ui/core";
-import { Room } from "../domain/models";
+import { Room } from "../domain/room";
 import useGroups from "../queries/groups";
 
 const RoomSwitch = ({ room }: { room: Room }) => {

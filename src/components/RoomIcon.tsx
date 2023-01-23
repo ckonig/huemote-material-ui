@@ -1,5 +1,5 @@
 import { Icon } from "@material-ui/core";
-import { Room } from "../domain/models";
+import { Room } from "../domain/room";
 
 export const hueClassToFaIcon = (hue: string) => {
   //@todo move to json config

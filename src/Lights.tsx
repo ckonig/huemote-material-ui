@@ -10,7 +10,7 @@ import Accordion from "./Accordion";
 import React from "react";
 import Room from "./Room";
 import ProductIcon from "./ProductIcon";
-import { useRooms } from "./domain/models";
+import { useRooms } from "./domain/room";
 import { BrightnessSlider } from "./components/BrightnessSlider";
 import { LightSwitch } from "./components/LightSwitch";
 

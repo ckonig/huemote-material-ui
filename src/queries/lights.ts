@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { RawLightsResponse } from "../clip/v1/lights";
-import { Light } from "../domain/models";
+import { Light } from "../domain/room";
 import { useHueContext } from "../HueContext";
 
 const useLights = () => {
