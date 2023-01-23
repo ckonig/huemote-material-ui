@@ -13,92 +13,104 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import React from "react";
-import generateUID from "../generateUID";
-import { useHueContext } from "../HueContext";
-import { getStepTitle, Steps } from "../useSteps";
+import generateUID from "../../generateUID";
+import { useHueContext } from "../../HueContext";
+import { getStepTitle, Steps } from "./useSteps";
+import { useBridgeDiscovery } from "../../queries/setup";
 
-export interface ConfirmationDialogRawProps {
-  classes: Record<"paper", string>;
-  id: string;
-  keepMounted: boolean;
-  open: boolean;
-  onClose: () => void;
-  step: number;
-  next: () => void;
-}
+export default function ConfirmationDialog() {
+  const [state, setState] = React.useState({
+    open: true,
+    step: Steps.START,
+    UID: generateUID(),
+    ip: "",
+    consent: false,
+  });
 
-function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
-  const { onClose, open, ...other } = props;
-  const [UID, setUID] = React.useState<string>(generateUID());
+  const {
+    state: { baseUrl },
+  } = useHueContext();
 
   React.useEffect(() => {
-    if (!open) setUID(generateUID);
-  }, [open]);
-
-  const [ip, setIp] = React.useState<string>("");
-
-  const { initialize, state } = useHueContext();
-
-  //@todo move to API
-  React.useEffect(() => {
-    if (props.step === Steps.BRIDGE && !ip && !state.baseUrl) {
-      fetch("https://discovery.meethue.com/")
-        .then((d) => d.json())
-        .then((bridges) => {
-          if (bridges && bridges.length > 0) {
-            setIp(bridges[0].internalipaddress);
-          }
-        });
+    if (!baseUrl && !state.open) {
+      setState({ ...state, step: Steps.START, open: true });
     }
-  }, [props.step, ip, state.baseUrl]);
+  }, [baseUrl, state]);
 
-  const [consent, setConsent] = React.useState<boolean>(false);
+  const classes = {
+    paper: useStyles().paper,
+  };
+
+  React.useEffect(() => {
+    if (!state.open) setState({ ...state, UID: generateUID() });
+  }, [state]);
+
+  const { initialize } = useHueContext();
+
+  const { bridges } = useBridgeDiscovery();
+
+  React.useEffect(() => {
+    if (
+      state.step === Steps.BRIDGE &&
+      !state.ip &&
+      !baseUrl &&
+      bridges.length
+    ) {
+      setState({ ...state, ip: bridges[0].internalipaddress });
+    }
+  }, [state, baseUrl, bridges]);
 
   const getTitle = React.useCallback(() => {
-    return getStepTitle(props.step);
-  }, [props]);
+    return getStepTitle(state.step);
+  }, [state.step]);
 
   //@todo move to API
   const handleOk = React.useCallback(() => {
-    if (props.step === Steps.CONNECT && consent && ip) {
+    const onClose = () => setState({ ...state, open: false });
+    const next = () => setState({ ...state, step: state.step + 1 });
+    if (state.step === Steps.CONNECT && state.consent && state.ip) {
       fetch(`http://${ip}/api`, {
         method: "post",
-        body: JSON.stringify({ devicetype: "hue-react#" + UID }),
+        body: JSON.stringify({ devicetype: "hue-react#" + state.UID }),
       })
         .then((d) => d.json())
         .then((d) => {
           if (d.length === 1 && d[0].error && d[0].error.type === 101) {
             console.log("ALERT: press connect button! @todo");
           } else if (d.length > 0 && d[0].success && d[0].success.username) {
-            initialize(ip, d[0].success.username, "hue-react#" + UID);
+            initialize(
+              state.ip,
+              d[0].success.username,
+              "hue-react#" + state.UID
+            );
             onClose();
           } else {
             console.error("unknown case @todo", d);
           }
         });
     }
-    if (props.step === Steps.START) {
-      props.next();
+    if (state.step === Steps.START) {
+      next();
     }
-    if (props.step === Steps.CONSENT) {
-      props.next();
+    if (state.step === Steps.CONSENT) {
+      next();
     }
-    if (props.step === Steps.BRIDGE) {
-      props.next();
+    if (state.step === Steps.BRIDGE) {
+      next();
     }
-  }, [props, UID, initialize, consent, ip, onClose]);
+  }, [state, initialize]);
 
-  if (state.baseUrl) {
+  if (baseUrl) {
     return null;
   }
 
   const Content = () => {
-    if (props.step === Steps.START) {
+    if (state.step === Steps.START) {
       return (
         <Typography>Press Continue to start the Connection Wizard.</Typography>
       );
     }
-    if (props.step === Steps.CONSENT) {
+    if (state.step === Steps.CONSENT) {
       return (
         <>
           <Typography>
@@ -109,8 +121,8 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
             control={
               <Checkbox
                 required
-                checked={consent}
-                onChange={(e, v) => setConsent(v)}
+                checked={state.consent}
+                onChange={(e, v) => setState({ ...state, consent: v })}
                 name="consent"
               />
             }
@@ -119,14 +131,14 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
         </>
       );
     }
-    if (props.step === Steps.BRIDGE) {
+    if (state.step === Steps.BRIDGE) {
       return (
         <>
           <TextField
             label=""
-            value={ip}
+            value={state.ip}
             variant="outlined"
-            onChange={(e) => setIp(e.target.value)}
+            onChange={(e) => setState({ ...state, ip: e.target.value })}
           />
           <FormHelperText>
             Enter the IP address of the Hue Bridge on your local network. Make
@@ -135,7 +147,7 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
         </>
       );
     }
-    if (props.step === Steps.CONNECT) {
+    if (state.step === Steps.CONNECT) {
       return (
         <>
           <Typography>
@@ -143,8 +155,8 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
             press "Finish" below.
           </Typography>
           <Typography>
-            This will request permissions for this app (<i> react-app-{UID} </i>
-            ) in your Hue Bridge.
+            This will request permissions for this app (
+            <i> react-app-{state.UID} </i>) in your Hue Bridge.
           </Typography>
         </>
       );
@@ -157,8 +169,10 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
       disableEscapeKeyDown
       maxWidth="xs"
       aria-labelledby="confirmation-dialog-title"
-      open={open}
-      {...other}
+      open={state.open}
+      id="ringtone-menu"
+      keepMounted
+      classes={classes}
     >
       <DialogTitle id="confirmation-dialog-title">{getTitle()}</DialogTitle>
       <DialogContent dividers>
@@ -166,11 +180,11 @@ function ConfirmationDialogRaw(props: ConfirmationDialogRawProps) {
       </DialogContent>
       <DialogActions>
         <Button
-          disabled={!consent && props.step === Steps.CONSENT}
+          disabled={!state.consent && state.step === Steps.CONSENT}
           onClick={handleOk}
           color="primary"
         >
-          {props.step === Steps.CONNECT ? "Finish" : "Continue"}
+          {state.step === Steps.CONNECT ? "Finish" : "Continue"}
         </Button>
       </DialogActions>
     </Dialog>
@@ -190,31 +204,3 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-export default function ConfirmationDialog() {
-  const classes = useStyles();
-  const [state, setState] = React.useState({ open: true, step: Steps.START });
-  const {
-    state: { baseUrl },
-  } = useHueContext();
-
-  React.useEffect(() => {
-    if (!baseUrl && !state.open) {
-      setState({ step: Steps.START, open: true });
-    }
-  }, [baseUrl, state]);
-
-  return (
-    <ConfirmationDialogRaw
-      classes={{
-        paper: classes.paper,
-      }}
-      id="ringtone-menu"
-      keepMounted
-      step={state.step}
-      next={() => setState({ ...state, step: state.step + 1 })}
-      open={state.open}
-      onClose={() => setState({ ...state, open: false })}
-    />
-  );
-}
