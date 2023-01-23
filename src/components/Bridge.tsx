@@ -5,8 +5,8 @@ import CardContent from "@material-ui/core/CardContent";
 import { Icon } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import useConfig from "../queries/config";
-import { useConnection } from "../queries/setup";
+import useConfig from "../queries/useConfig";
+import useConnection from "../queries/useConnection";
 
 const useCardStyles = makeStyles({
   root: {

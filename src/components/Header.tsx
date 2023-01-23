@@ -1,5 +1,5 @@
 import { Icon, IconButton } from "@material-ui/core";
-import useLights from "../queries/lights";
+import useLights from "../queries/useLights";
 
 const Header = () => {
   const { shutDown } = useLights();

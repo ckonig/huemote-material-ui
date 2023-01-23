@@ -6,8 +6,13 @@ export interface LightsReponseObj {
   name: string;
   productid: string;
   productname: string;
-  state: any;
+  state: LightState;
   type: string;
+}
+
+export interface LightState {
+  bri: number;
+  on: boolean;
 }
 
 export type RawLightsResponse = { [name: number]: LightsReponseObj };

@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { RawLightsResponse } from "../clip/v1/lights";
-import { Light } from "../domain/room";
-import { useConnection } from "./setup";
+import { Light } from "../domain/models";
+import useConnection from "./useConnection";
 
 const useLights = () => {
   const { baseUrl } = useConnection();

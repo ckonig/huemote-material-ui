@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "react-query";
 import { useCallback, useMemo } from "react";
 import { ScenesReponse } from "../clip/v1/scenes";
-import { Scene } from "../domain/room";
-import { useConnection } from "./setup";
+import { Scene } from "../domain/models";
+import useConnection from "./useConnection";
 
 const useScenes = () => {
   const queryClient = useQueryClient();

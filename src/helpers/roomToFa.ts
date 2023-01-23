@@ -1,4 +1,6 @@
-//@todo move to json
+//This helper maps names (from sensors and switches) to fa-icons
+//it uses the first word from the name of the sensor to find out the matching icon
+//@todo make configurability more obvious
 const roomToFa = (room: string) => {
   switch (room) {
     case "Living":

@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { useMemo } from "react";
-import { SensorRootObject } from "../clip/v1/sensors";
-import { useConnection } from "./setup";
+import { SensorObject, SensorRootObject } from "../clip/v1/sensors";
+import useConnection from "./useConnection";
 
 const useAccessories = () => {
   const { baseUrl } = useConnection();
@@ -17,8 +17,21 @@ const useAccessories = () => {
     initialData,
   });
 
+  const filterByType = (accessories: SensorRootObject, type: string) =>
+    Object.keys(accessories)
+      .filter((key) => accessories[key].type === type)
+      .map((key) => accessories[key]);
+
+  const filterById = (sensors: SensorObject[], id: string) =>
+    sensors.filter((s) => s.uniqueid.substring(0, 26) === id.substring(0, 26));
+
+  const getUniqueId = (id: string) => id.substring(0, 26);
+
   return useMemo(
     () => ({
+      filterByType,
+      filterById,
+      getUniqueId,
       accessories: query.data || initialData,
     }),
     [initialData, query]

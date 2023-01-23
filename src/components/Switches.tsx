@@ -1,6 +1,6 @@
 import { Paper } from "@material-ui/core";
-import Switch from "./SwitchCard";
-import { useSwitches } from "../domain/sensor";
+import Switch from "./Switch";
+import { useSwitches } from "../domain/useSwitches";
 
 const Switches = () => {
   const { switches } = useSwitches();

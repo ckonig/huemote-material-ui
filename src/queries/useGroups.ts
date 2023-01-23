@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "react-query";
 import { GroupsResponse } from "../clip/v1/groups";
 import { useCallback, useMemo } from "react";
-import { Room } from "../domain/room";
-import { useConnection } from "./setup";
+import useConnection from "./useConnection";
+import { Room } from "../domain/models";
 
 const useGroups = () => {
   const queryClient = useQueryClient();

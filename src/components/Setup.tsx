@@ -12,15 +12,16 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import React from "react";
-import generateUID from "../../generateUID";
+import { useCallback, useEffect, useState } from "react";
+import generateUID from "../helpers/generateUID";
 import { getStepTitle, Steps } from "./useSteps";
-import { useBridgeDiscovery, useConnection } from "../../queries/setup";
+import { useBridgeDiscovery } from "../queries/useBridgeDiscovery";
+import useConnection from "../queries/useConnection";
 
 export default function ConfirmationDialog() {
   const { baseUrl, initialize } = useConnection();
 
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     open: true,
     step: Steps.START,
     UID: generateUID(),
@@ -28,7 +29,7 @@ export default function ConfirmationDialog() {
     consent: false,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!baseUrl && !state.open) {
       setState({ ...state, step: Steps.START, open: true });
     }
@@ -39,7 +40,7 @@ export default function ConfirmationDialog() {
   };
 
   const { bridges } = useBridgeDiscovery();
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       state.open &&
       state.step === Steps.BRIDGE &&
@@ -61,11 +62,11 @@ export default function ConfirmationDialog() {
     }
   }, [state, baseUrl, bridges]);
 
-  const getTitle = React.useCallback(() => {
+  const getTitle = useCallback(() => {
     return getStepTitle(state.step);
   }, [state.step]);
 
-  const handleOk = React.useCallback(() => {
+  const handleOk = useCallback(() => {
     const onClose = () => setState({ ...state, open: false });
     const next = () => setState({ ...state, step: state.step + 1 });
     //@todo move to API

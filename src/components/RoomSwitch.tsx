@@ -1,6 +1,6 @@
 import { Switch } from "@material-ui/core";
-import { Room } from "../domain/room";
-import useGroups from "../queries/groups";
+import { Room } from "../domain/models";
+import useGroups from "../queries/useGroups";
 
 const RoomSwitch = ({ room }: { room: Room }) => {
   const { toggle } = useGroups();

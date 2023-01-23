@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { useMemo } from "react";
 import { Config } from "../clip/v1/config";
-import { useConnection } from "./setup";
+import useConnection from "./useConnection";
 
 const useConfig = () => {
   const { baseUrl } = useConnection();

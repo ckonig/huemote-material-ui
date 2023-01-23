@@ -1,6 +1,6 @@
 import { CssBaseline, ThemeProvider, createTheme } from "@material-ui/core";
 import { BrowserRouter } from "react-router-dom";
-import ConfirmationDialog from "./components/setup/Setup";
+import ConfirmationDialog from "./components/Setup";
 import { useMemo } from "react";
 import TabNav from "./components/TabNav";
 import useMediaQuery from "@material-ui/core/useMediaQuery";

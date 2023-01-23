@@ -1,6 +1,6 @@
 import { Paper } from "@material-ui/core";
-import { useSensors } from "../domain/sensor";
-import Sensor from "./SensorCard";
+import { useSensors } from "../domain/useSensors";
+import Sensor from "./Sensor";
 
 const Sensors = () => {
   const { sensors } = useSensors();
