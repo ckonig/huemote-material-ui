@@ -5,7 +5,6 @@ import { Room as RoomModel } from "../domain/models";
 import { useRooms } from "../domain/useRooms";
 import { useState } from "react";
 import { RoomList } from "./RoomLayout";
-import Scene from "./Scene";
 
 const Rooms = ({
   handler,
