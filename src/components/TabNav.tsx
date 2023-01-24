@@ -1,4 +1,5 @@
-import { AppBar, Icon, Theme, makeStyles } from "@material-ui/core";
+import { AppBar, Icon, Theme } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Bridge from "./Bridge";
@@ -9,9 +10,9 @@ import Scenes from "./Scenes";
 import Sensors from "./Sensors";
 import SwipeableViews from "react-swipeable-views";
 import Switches from "./Switches";
-import Tab from "@material-ui/core/Tab";
+import Tab from "@mui/material/Tab";
 import TabPanel from "./TabPanel";
-import Tabs from "@material-ui/core/Tabs";
+import Tabs from "@mui/material/Tabs";
 
 const tabs = [
   { icon: "fa-photo-video", label: "Scenes", route: "/Scenes" },

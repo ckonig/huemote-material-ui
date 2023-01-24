@@ -1,4 +1,4 @@
-import { Box, Button, Divider, ListItemText } from "@material-ui/core";
+import { Box, Button, Divider, ListItemText } from "@mui/material";
 import React from "react";
 import { Scene as SceneModel } from "../domain/models";
 import useScenes from "../queries/useScenes";

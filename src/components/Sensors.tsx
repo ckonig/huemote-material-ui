@@ -1,4 +1,4 @@
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 import { useSensors } from "../domain/useSensors";
 import Sensor from "./Sensor";
 

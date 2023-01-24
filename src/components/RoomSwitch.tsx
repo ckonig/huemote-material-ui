@@ -1,4 +1,4 @@
-import { Switch } from "@material-ui/core";
+import { Switch } from "@mui/material";
 import { Room } from "../domain/models";
 import useGroups from "../queries/useGroups";
 

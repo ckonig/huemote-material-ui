@@ -1,4 +1,4 @@
-import { Chip, Icon } from "@material-ui/core";
+import { Chip, Icon } from "@mui/material";
 
 const iconStyle = {
   width: "auto",

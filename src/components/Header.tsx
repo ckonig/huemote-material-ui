@@ -1,4 +1,4 @@
-import { Icon, IconButton } from "@material-ui/core";
+import { Icon, IconButton } from "@mui/material";
 import useLights from "../queries/useLights";
 
 const Header = () => {
@@ -15,6 +15,7 @@ const Header = () => {
           fontSize: "2em",
         }}
         onClick={() => shutDown()}
+        size="large"
       >
         <Icon className={"fa fa-power-off"} />
       </IconButton>

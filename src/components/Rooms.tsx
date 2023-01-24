@@ -1,4 +1,4 @@
-import { AccordionDetails } from "@material-ui/core";
+import { AccordionDetails } from "@mui/material";
 import Accordion from "./Accordion";
 import Room from "./Room";
 import { Room as RoomModel } from "../domain/models";

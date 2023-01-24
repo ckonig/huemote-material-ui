@@ -1,4 +1,4 @@
-import { Icon } from "@material-ui/core";
+import { Icon } from "@mui/material";
 import { Room } from "../domain/models";
 import hueClassToFaIcon from "../helpers/hueClassToFaIcon";
 

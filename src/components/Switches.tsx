@@ -1,4 +1,4 @@
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 import Switch from "./Switch";
 import { useSwitches } from "../domain/useSwitches";
 

@@ -1,4 +1,4 @@
-import { Box, Divider, ListItemText } from "@material-ui/core";
+import { Box, Divider, ListItemText } from "@mui/material";
 import ProductIcon from "./ProductIcon";
 import { BrightnessSlider } from "./BrightnessSlider";
 import { LightSwitch } from "./LightSwitch";

@@ -1,4 +1,4 @@
-import { Box, Card, CardActions, CardHeader, Icon } from "@material-ui/core";
+import { Box, Card, CardActions, CardHeader, Icon } from "@mui/material";
 
 import Battery from "./Battery";
 import FooterChip from "./FooterChip";

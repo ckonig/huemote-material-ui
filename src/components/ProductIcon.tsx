@@ -1,4 +1,4 @@
-import { ListItemIcon } from "@material-ui/core";
+import { ListItemIcon } from "@mui/material";
 import productToIcon from "../helpers/productToIcon";
 
 const ProductIcon = ({ productname }: { productname: string }) => {

@@ -1,5 +1,5 @@
-import MuiAccordionSummary from "@material-ui/core/AccordionSummary";
-import { withStyles } from "@material-ui/core";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import withStyles from '@mui/styles/withStyles';
 
 const AccordionSummary = withStyles({
   root: {

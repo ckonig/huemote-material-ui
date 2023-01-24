@@ -1,4 +1,4 @@
-import { List, ListItem } from "@material-ui/core";
+import { List, ListItem } from "@mui/material";
 
 export const RoomList = ({ children }: { children: React.ReactNode }) => {
   return (

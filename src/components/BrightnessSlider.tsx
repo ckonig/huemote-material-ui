@@ -1,4 +1,4 @@
-import { Slider } from "@material-ui/core";
+import { Slider } from "@mui/material";
 import { Light } from "../domain/models";
 import useLights from "../queries/useLights";
 
