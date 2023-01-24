@@ -2,13 +2,12 @@ import { Box, Divider, ListItemText } from "@mui/material";
 import ProductIcon from "./ProductIcon";
 import { BrightnessSlider } from "./BrightnessSlider";
 import { LightSwitch } from "./LightSwitch";
-import React from "react";
 import { RoomListItem } from "./RoomLayout";
 import { Light as LightModel } from "../domain/models";
 
 const Light = ({ light }: { light: LightModel }) => {
   return (
-    <React.Fragment key={light.id}>
+    <Box key={light.id}>
       <RoomListItem>
         <Box width="100%" display="flex" flexDirection="row">
           <Box display="flex" flexGrow={1}>
@@ -21,13 +20,13 @@ const Light = ({ light }: { light: LightModel }) => {
         </Box>
         <BrightnessSlider light={light} />
       </RoomListItem>
-      {!light.state.bri && (
+      {!light.state?.bri && (
         <Divider
           key={light.id + "d"}
           style={{ marginBottom: 13, marginTop: 14 }}
         />
       )}
-    </React.Fragment>
+    </Box>
   );
 };
 

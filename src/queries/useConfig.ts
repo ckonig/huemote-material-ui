@@ -1,20 +1,14 @@
 import { useQuery } from "react-query";
-import { useMemo } from "react";
 import { Config } from "../clip/v1/config";
-import useConnection from "./useConnection";
+import useQueryCache from "./useQueryCache";
+import useApi from "../clip/v1/api";
 
 const useConfig = () => {
-  const { baseUrl } = useConnection();
-  const initialData = useMemo(() => ({} as Config), []);
-  return useQuery<Config, any>(`${baseUrl}/config`, {
-    queryFn: async () => {
-      const response = await fetch(`${baseUrl}/config`);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    initialData,
+  const api = useApi();
+  const cache = useQueryCache();
+  return useQuery<Config, any>(cache.keys.config, {
+    queryFn: () => api.getConfig(),
+    initialData: {} as Config,
   });
 };
 export default useConfig;

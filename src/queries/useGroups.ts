@@ -1,48 +1,45 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { GroupsResponse } from "../clip/v1/groups";
 import { useCallback, useMemo } from "react";
-import useConnection from "./useConnection";
 import { Room } from "../domain/models";
+import useQueryCache from "./useQueryCache";
+import useApi from "../clip/v1/api";
 
 const useGroups = () => {
-  const queryClient = useQueryClient();
-  const { baseUrl } = useConnection();
+  const cache = useQueryCache();
+  const api = useApi();
   const initialData = useMemo(() => ({} as GroupsResponse), []);
-  const query = useQuery<GroupsResponse, any>(`${baseUrl}/groups`, {
+  const query = useQuery<GroupsResponse, any>(cache.keys.groups, {
     cacheTime: 10,
-    queryFn: async () => {
-      const response = await fetch(`${baseUrl}/groups`);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
+    queryFn: () => api.getGroups(),
     initialData,
   });
 
-  const refreshGroups = useCallback(() => {
-    queryClient.refetchQueries({ queryKey: `${baseUrl}/groups` });
-    queryClient.refetchQueries({ queryKey: `${baseUrl}/lights` });
-  }, [baseUrl, queryClient]);
+  const refreshGroups = useCallback(async () => {
+    await cache.clear.groups();
+    await cache.clear.lights();
+  }, [cache]);
 
   const toggle = useCallback(
     async (elem: Room) => {
-      const payload = { on: !elem.state.any_on };
-      await fetch(`${baseUrl}/groups/${elem.id}/action`, {
-        method: "put",
-        body: JSON.stringify(payload),
-      });
+      await api.putGroupAction(elem.id, { on: !elem.state.any_on });
       refreshGroups();
     },
-    [baseUrl, refreshGroups]
+    [api, refreshGroups]
   );
+
+  const shutDown = useCallback(async () => {
+    await api.putGroupAction(0, { on: false });
+    refreshGroups();
+  }, [api, refreshGroups]);
 
   return useMemo(
     () => ({
       groups: query.data || initialData,
       toggle,
+      shutDown,
     }),
-    [initialData, query, toggle]
+    [initialData, query, toggle, shutDown]
   );
 };
 export default useGroups;

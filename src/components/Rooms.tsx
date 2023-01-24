@@ -24,7 +24,7 @@ const Rooms = ({
             setExpanded(newExpanded ? room.id : false)
           }
         >
-          <Room room={room} />
+          <Room backgrounded={!!expanded && expanded !== room.id} room={room} />
           <AccordionDetails>
             <RoomList>{handler(room)}</RoomList>
           </AccordionDetails>

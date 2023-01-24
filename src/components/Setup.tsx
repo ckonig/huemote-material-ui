@@ -1,14 +1,4 @@
-import {
-  Checkbox,
-  FormHelperText,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Theme } from "@mui/material/styles";
-
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
-
+import { Checkbox, FormHelperText, TextField, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -20,9 +10,11 @@ import generateUID from "../helpers/generateUID";
 import { getStepTitle, Steps } from "./useSteps";
 import { useBridgeDiscovery } from "../queries/useBridgeDiscovery";
 import useConnection from "../queries/useConnection";
+import useApi from "../clip/v1/api";
 
 export default function ConfirmationDialog() {
-  const { baseUrl, initialize } = useConnection();
+  const { connected, initialize } = useConnection();
+  const api = useApi();
 
   const [state, setState] = useState({
     open: true,
@@ -33,14 +25,10 @@ export default function ConfirmationDialog() {
   });
 
   useEffect(() => {
-    if (!baseUrl && !state.open) {
+    if (!connected && !state.open) {
       setState({ ...state, step: Steps.START, open: true });
     }
-  }, [baseUrl, state]);
-
-  const classes = {
-    paper: useStyles().paper,
-  };
+  }, [connected, state]);
 
   const bridges = useBridgeDiscovery();
   useEffect(() => {
@@ -48,10 +36,12 @@ export default function ConfirmationDialog() {
       state.open &&
       state.step === Steps.BRIDGE &&
       !state.ip &&
-      !baseUrl &&
+      !connected &&
       !bridges.isFetched
     ) {
+      //@todo this call is async and will trigger state updates
       bridges.refetch();
+      //@todo following code is executed too early
       if (
         bridges.isSuccess &&
         bridges.data?.length &&
@@ -59,11 +49,11 @@ export default function ConfirmationDialog() {
       ) {
         setState({
           ...state,
-          ip: bridges.data[0].internalipaddress || "could not retrieve",
+          ip: bridges.data[0].internalipaddress,
         });
       }
     }
-  }, [state, baseUrl, bridges]);
+  }, [state, connected, bridges]);
 
   const getTitle = useCallback(() => {
     return getStepTitle(state.step);
@@ -72,27 +62,19 @@ export default function ConfirmationDialog() {
   const handleOk = useCallback(() => {
     const onClose = () => setState({ ...state, open: false });
     const next = () => setState({ ...state, step: state.step + 1 });
-    //@todo move to API
     if (state.step === Steps.CONNECT && state.consent && state.ip) {
-      fetch(`http://${state.ip}/api`, {
-        method: "post",
-        body: JSON.stringify({ devicetype: "hue-react#" + state.UID }),
-      })
-        .then((d) => d.json())
-        .then((d) => {
-          if (d.length === 1 && d[0].error && d[0].error.type === 101) {
-            console.log("ALERT: press connect button! @todo");
-          } else if (d.length > 0 && d[0].success && d[0].success.username) {
-            initialize(
-              state.ip,
-              d[0].success.username,
-              "hue-react#" + state.UID
-            );
-            onClose();
-          } else {
-            console.error("unknown case @todo", d);
-          }
-        });
+      //todo move to domain or api
+      api.connect(state.ip, state.UID).then((d) => {
+        if (d.length === 1 && d[0].error && d[0].error.type === 101) {
+          //@todo handle in UI
+          console.log("ALERT: press connect button! @todo");
+        } else if (d.length > 0 && d[0].success && d[0].success.username) {
+          initialize(state.ip, d[0].success.username, "hue-react#" + state.UID);
+          onClose();
+        } else {
+          console.error("unknown case @todo", d);
+        }
+      });
     }
     if (state.step === Steps.START) {
       next();
@@ -103,9 +85,9 @@ export default function ConfirmationDialog() {
     if (state.step === Steps.BRIDGE && state.ip) {
       next();
     }
-  }, [state, initialize]);
+  }, [state, api, initialize]);
 
-  if (baseUrl) {
+  if (connected) {
     return null;
   }
 
@@ -172,12 +154,10 @@ export default function ConfirmationDialog() {
   return (
     <Dialog
       disableEscapeKeyDown
-      maxWidth="xs"
       aria-labelledby="confirmation-dialog-title"
       open={state.open}
       id="ringtone-menu"
       keepMounted
-      classes={classes}
     >
       <DialogTitle id="confirmation-dialog-title">{getTitle()}</DialogTitle>
       <DialogContent dividers>
@@ -195,17 +175,3 @@ export default function ConfirmationDialog() {
     </Dialog>
   );
 }
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: "100%",
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-    },
-    paper: {
-      width: "80%",
-      maxHeight: 435,
-    },
-  })
-);

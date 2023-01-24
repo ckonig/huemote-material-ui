@@ -1,16 +1,19 @@
-import { Switch } from "@mui/material";
+import { Switch, SwitchProps } from "@mui/material";
 import { Room } from "../domain/models";
 import useGroups from "../queries/useGroups";
 
-const RoomSwitch = ({ room }: { room: Room }) => {
+interface RoomSwitchProps extends SwitchProps {
+  room: Room;
+}
+const RoomSwitch = (props: RoomSwitchProps) => {
   const { toggle } = useGroups();
   return (
     <Switch
-      checked={room.state.any_on}
+      checked={props.room.state.any_on}
       onClick={(e) => e.stopPropagation()}
       onChange={(e) => {
         e.stopPropagation();
-        toggle(room);
+        toggle(props.room);
       }}
       color="primary"
       inputProps={{ "aria-label": "primary checkbox" }}

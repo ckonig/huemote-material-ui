@@ -1,8 +1,8 @@
 import { Icon, IconButton } from "@mui/material";
-import useLights from "../queries/useLights";
+import useGroups from "../queries/useGroups";
 
 const Header = () => {
-  const { shutDown } = useLights();
+  const { shutDown } = useGroups();
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
       <IconButton

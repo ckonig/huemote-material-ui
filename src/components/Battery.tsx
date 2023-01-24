@@ -1,7 +1,5 @@
 import "./battery.scss";
 
-import React from "react";
-
 const Battery = (props: { level: number }) => {
   return (
     <div style={{ margin: "auto" }}>

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { createBaseUrl } from "../clip/v1/createBaseUrl";
 
 export interface HueConnection {
-  baseUrl: string | false;
+  baseUrl: string | "";
   username: string | false;
   appname: string | false;
 }
@@ -22,21 +22,14 @@ const useConnection = () => {
     [setState]
   );
 
-  const connect = useCallback(async (ip: string, uid: string) => {
-    return fetch(`http://${ip}/api`, {
-      method: "post",
-      body: JSON.stringify({ devicetype: "hue-react#" + uid }),
-    });
-  }, []);
-
   const disconnect = useCallback(() => {
     localStorage.clear();
     setState({} as HueConnection);
   }, [setState]);
 
   return useMemo(
-    () => ({ ...state, connect, disconnect, initialize }),
-    [initialize, connect, disconnect, state]
+    () => ({ ...state, disconnect, initialize, connected: !!state.baseUrl }),
+    [initialize, disconnect, state]
   );
 };
 

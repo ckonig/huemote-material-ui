@@ -1,11 +1,10 @@
-import { AppBar, Icon, Theme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import { AppBar, Box, Icon } from "@mui/material";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Bridge from "./Bridge";
 import Header from "./Header";
 import Lights from "./Lights";
-import React from "react";
+import { useCallback, ChangeEvent } from "react";
 import Scenes from "./Scenes";
 import Sensors from "./Sensors";
 import SwipeableViews from "react-swipeable-views";
@@ -22,19 +21,13 @@ const tabs = [
   { icon: "fa-plug", label: "Bridge", route: "/Bridge" },
 ];
 
-const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    flexDirection: "row",
-  },
-}));
-
 function TabNav(props: RouteComponentProps<any>) {
-  const getPathIndex = React.useCallback(() => {
+  const getPathIndex = useCallback(() => {
     const found = tabs.findIndex((t) => t.route === props.location.pathname);
     return found > 0 ? found : 0;
   }, [props]);
 
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleTabChange = (event: ChangeEvent<{}>, newValue: number) => {
     props.history.push(tabs[newValue].route);
     //@todo refresh
   };
@@ -44,11 +37,9 @@ function TabNav(props: RouteComponentProps<any>) {
     //@todo refresh
   };
 
-  const classes = useStyles();
-
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         width: "100vw",
         maxWidth: 400,
         margin: "auto",
@@ -61,7 +52,7 @@ function TabNav(props: RouteComponentProps<any>) {
           onChange={handleTabChange}
           scrollButtons="auto"
           variant="scrollable"
-          className={classes.wrapper}
+          sx={{ flexDirection: "row" }}
           value={getPathIndex()}
         >
           {tabs.map((tab, ti) => (
@@ -98,7 +89,7 @@ function TabNav(props: RouteComponentProps<any>) {
           <Bridge />
         </TabPanel>
       </SwipeableViews>
-    </div>
+    </Box>
   );
 }
 

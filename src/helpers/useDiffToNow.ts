@@ -1,4 +1,4 @@
-import React from "react";
+import { useMemo } from "react";
 
 const toUtc = (date: any) => {
   var now_utc = Date.UTC(
@@ -14,7 +14,7 @@ const toUtc = (date: any) => {
 };
 
 const useDiffToNow = (date: string) => {
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (!date) return null;
     const then = new Date(date);
 

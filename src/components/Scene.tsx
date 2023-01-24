@@ -1,5 +1,4 @@
 import { Box, Button, Divider, ListItemText } from "@mui/material";
-import React from "react";
 import { Scene as SceneModel } from "../domain/models";
 import useScenes from "../queries/useScenes";
 import { RoomListItem } from "./RoomLayout";
@@ -7,7 +6,7 @@ import { RoomListItem } from "./RoomLayout";
 const Scene = ({ scene }: { scene: SceneModel }) => {
   const { activate } = useScenes();
   return (
-    <React.Fragment key={scene.id}>
+    <Box key={scene.id}>
       <RoomListItem>
         <Box width="100%" display="flex" flexDirection="row">
           <Box display="flex" flexGrow={1}>
@@ -25,7 +24,7 @@ const Scene = ({ scene }: { scene: SceneModel }) => {
         </Box>
       </RoomListItem>
       <Divider style={{ marginBottom: 13, marginTop: 14 }} />
-    </React.Fragment>
+    </Box>
   );
 };
 

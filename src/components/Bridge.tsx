@@ -2,61 +2,51 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import { Icon } from "@mui/material";
+import { Box, Icon } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import makeStyles from '@mui/styles/makeStyles';
 import useConfig from "../queries/useConfig";
 import useConnection from "../queries/useConnection";
 
-const useCardStyles = makeStyles({
-  root: {
-    minWidth: 275,
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-  label: {
+const Label = ({ children }: { children: React.ReactNode }) => {
+  const style = {
     float: "left",
     width: 150,
-  },
-});
+  };
+  return (
+    <Box component="span" sx={style}>
+      {children}
+    </Box>
+  );
+};
 
 const Bridge = () => {
   const { appname, disconnect } = useConnection();
   const { data: config, isFetched } = useConfig();
-  const cardClasses = useCardStyles();
   if (!config || !isFetched) return null;
   return (
     <>
-      <Card className={cardClasses.root} variant="outlined">
+      <Card sx={{ minWidth: 275 }} variant="outlined">
         <CardContent>
-          <Typography
-            className={cardClasses.title}
-            color="textSecondary"
-            gutterBottom
-          >
+          <Typography sx={{ fontSize: 14 }} color="textSecondary" gutterBottom>
             Connected with Hue Bridge
           </Typography>
           <Typography variant="h5" component="h2">
             {config.name}
           </Typography>
-          <Typography className={cardClasses.pos} color="textSecondary">
+          <Typography sx={{ marginBottom: 12 }} color="textSecondary">
             Model: {config.modelid}
           </Typography>
           <Typography variant="body2" component="div">
-            <span className={cardClasses.label}>Mac Address</span>
+            <Label>Mac Address</Label>
             {config.mac}
             <br />
-            <span className={cardClasses.label}>IP Address</span>
+            <Label>IP Address</Label>
             {config.ipaddress}
             <br />
-            <span className={cardClasses.label}>Zigbee Channel</span>
+            <Label>Zigbee Channel</Label>
             {config.zigbeechannel}
             <br />
-            <span className={cardClasses.label}>App Name</span>
+            <Label>App Name</Label>
             {appname || ""}
             <br />
           </Typography>

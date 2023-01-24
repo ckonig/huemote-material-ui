@@ -7,7 +7,7 @@ export const LightSwitch = ({ light }: { light: Light }) => {
   return (
     <Switch
       size="small"
-      checked={!!light.state.on}
+      checked={!!light.state?.on}
       onChange={() => toggle(light)}
     />
   );

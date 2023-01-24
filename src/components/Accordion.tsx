@@ -1,8 +1,8 @@
-import MuiAccordion from "@mui/material/Accordion";
-import withStyles from '@mui/styles/withStyles';
+import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
 
-const Accordion = withStyles({
-  root: {
+const Accordion = (props: AccordionProps) => {
+  const sx = {
+    ...props.sx,
     border: "1px solid rgba(0, 0, 0, .125)",
     boxShadow: "none",
     "&:not(:last-child)": {
@@ -14,8 +14,12 @@ const Accordion = withStyles({
     "&$expanded": {
       margin: "auto",
     },
-  },
-  expanded: {},
-})(MuiAccordion);
+  };
+  return (
+    <MuiAccordion {...props} sx={sx}>
+      {props.children}
+    </MuiAccordion>
+  );
+};
 
 export default Accordion;

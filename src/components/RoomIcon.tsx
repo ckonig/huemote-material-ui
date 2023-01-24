@@ -1,11 +1,16 @@
-import { Icon } from "@mui/material";
+import Icon, { IconTypeMap } from "@mui/material/Icon";
+import { DefaultComponentProps } from "@mui/material/OverridableComponent";
 import { Room } from "../domain/models";
 import hueClassToFaIcon from "../helpers/hueClassToFaIcon";
 
-const RoomIcon = ({ room }: { room: Room }) => {
+interface RoomProps extends DefaultComponentProps<IconTypeMap> {
+  room: Room;
+}
+const RoomIcon = (props: RoomProps) => {
   return (
     <Icon
-      className={`fa ${hueClassToFaIcon(room.class)}`}
+      {...props}
+      className={`fa ${hueClassToFaIcon(props.room.class)}`}
       style={{ width: 45 }}
     />
   );

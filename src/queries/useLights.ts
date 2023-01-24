@@ -1,70 +1,50 @@
 import { useCallback, useMemo } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
+import useApi from "../clip/v1/api";
 import { RawLightsResponse } from "../clip/v1/lights";
 import { Light } from "../domain/models";
-import useConnection from "./useConnection";
+import useQueryCache from "./useQueryCache";
 
 const useLights = () => {
-  const { baseUrl } = useConnection();
-  const queryClient = useQueryClient();
+  const cache = useQueryCache();
+  const api = useApi();
   const initialData = useMemo(() => ({} as RawLightsResponse), []);
-  const query = useQuery<RawLightsResponse, any>(`${baseUrl}/lights`, {
+  const query = useQuery<RawLightsResponse, any>(cache.keys.lights, {
     cacheTime: 10,
-    queryFn: async () => {
-      const response = await fetch(`${baseUrl}/lights`);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
+    queryFn: () => api.getLights(),
     initialData,
   });
 
-  const refreshLights = useCallback(
-    () => queryClient.refetchQueries({ queryKey: `${baseUrl}/lights` }),
-    [baseUrl, queryClient]
-  );
-
-  const putJson = useCallback(
-    (url: string, body: any) =>
-      fetch(url, {
-        method: "put",
-        body: JSON.stringify(body),
-      }),
-    []
-  );
+  const refreshLights = useCallback(async () => {
+    await cache.clear.lights();
+    await cache.clear.groups();
+  }, [cache]);
 
   const setBrightness = useCallback(
     async (key: number, newval: number) => {
-      await putJson(`${baseUrl}/lights/${key}/state`, { bri: newval });
+      await api.putLightState(key, { bri: newval });
       refreshLights();
     },
-    [baseUrl, refreshLights, putJson]
+    [api, refreshLights]
   );
 
   const toggle = useCallback(
     async (light: Light) => {
-      await putJson(`${baseUrl}/lights/${light.id}/state`, {
+      await api.putLightState(light.id, {
         on: !light.state.on,
       });
       refreshLights();
     },
-    [baseUrl, refreshLights, putJson]
+    [api, refreshLights]
   );
-
-  const shutDown = useCallback(async () => {
-    await putJson(`${baseUrl}/groups/0/action`, { on: false });
-    refreshLights();
-  }, [baseUrl, refreshLights, putJson]);
 
   return useMemo(
     () => ({
       lights: query.data || initialData,
       setBrightness,
       toggle,
-      shutDown,
     }),
-    [query, initialData, setBrightness, toggle, shutDown]
+    [query, initialData, setBrightness, toggle]
   );
 };
 export default useLights;
