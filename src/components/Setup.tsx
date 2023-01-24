@@ -39,7 +39,7 @@ export default function ConfirmationDialog() {
     paper: useStyles().paper,
   };
 
-  const { bridges } = useBridgeDiscovery();
+  const bridges = useBridgeDiscovery();
   useEffect(() => {
     if (
       state.open &&

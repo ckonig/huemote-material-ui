@@ -6,7 +6,7 @@ import useConnection from "./useConnection";
 const useConfig = () => {
   const { baseUrl } = useConnection();
   const initialData = useMemo(() => ({} as Config), []);
-  const query = useQuery<Config, any>(`${baseUrl}/config`, {
+  return useQuery<Config, any>(`${baseUrl}/config`, {
     queryFn: async () => {
       const response = await fetch(`${baseUrl}/config`);
       if (!response.ok) {
@@ -16,12 +16,5 @@ const useConfig = () => {
     },
     initialData,
   });
-
-  return useMemo(
-    () => ({
-      config: query.data || initialData,
-    }),
-    [initialData, query]
-  );
 };
 export default useConfig;

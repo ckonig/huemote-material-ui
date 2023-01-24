@@ -26,8 +26,9 @@ const useCardStyles = makeStyles({
 
 const Bridge = () => {
   const { appname, disconnect } = useConnection();
-  const { config } = useConfig();
+  const { data: config, isFetched } = useConfig();
   const cardClasses = useCardStyles();
+  if (!config || !isFetched) return null;
   return (
     <>
       <Card className={cardClasses.root} variant="outlined">
