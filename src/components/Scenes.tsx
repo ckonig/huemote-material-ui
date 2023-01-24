@@ -6,7 +6,7 @@ const Scenes = () => {
   return (
     <Rooms
       handler={(room: Room) =>
-        room.scenes.map((scene) => <Scene scene={scene} />)
+        room.scenes.map((scene) => <Scene key={scene.id} scene={scene} />)
       }
     />
   );

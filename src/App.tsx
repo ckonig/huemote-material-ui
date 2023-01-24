@@ -1,10 +1,15 @@
-import { CssBaseline, ThemeProvider, createTheme } from "@material-ui/core";
+import {
+  CssBaseline,
+  ThemeProvider,
+  createTheme,
+  useMediaQuery,
+} from "@material-ui/core";
+import React, { useMemo } from "react";
 import { BrowserRouter } from "react-router-dom";
-import ConfirmationDialog from "./components/Setup";
-import { useMemo } from "react";
-import TabNav from "./components/TabNav";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { QueryClient, QueryClientProvider } from "react-query";
+
+import ConfirmationDialog from "./components/Setup";
+import TabNav from "./components/TabNav";
 
 function App() {
   const queryClient = useMemo(() => new QueryClient(), []);

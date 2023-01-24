@@ -6,7 +6,7 @@ const Lights = () => {
   return (
     <Rooms
       handler={(room: Room) =>
-        room.lights.map((light) => <Light light={light} />)
+        room.lights.map((light) => <Light key={light.id} light={light} />)
       }
     />
   );

@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from "@material-ui/core";
 import AccordionSummary from "./AccordionSummary";
 import RoomIcon from "./RoomIcon";
 import RoomSwitch from "./RoomSwitch";
-import { Room as RoomModel } from "../domain/useRooms";
+import { Room as RoomModel } from "../domain/models";
 
 const Room = ({ room }: { room: RoomModel }) => {
   return (
