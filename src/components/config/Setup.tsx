@@ -10,6 +10,7 @@ import generateUID from "../../helpers/generateUID";
 import { getStepTitle, Steps } from "./useSteps";
 import { useBridgeDiscovery } from "../../queries/useBridgeDiscovery";
 import useConnection from "../../queries/useConnection";
+//@todo figure out absolute paths
 import useApi from "../../clip/v1/api";
 
 export default function ConfirmationDialog() {
@@ -24,6 +25,12 @@ export default function ConfirmationDialog() {
     consent: false,
   });
 
+  //@todo move state machine and logic to domain layer
+  //domain has api too (need better name than api tho)
+  //it can be connected or not yet
+  //if connected it initialized and exposes the useQuery hooks (from separate hook)
+  //if not connected it exposes the setup state & step (from separate hook)
+  //domain api recognizes once setup is finished and switches state
   useEffect(() => {
     if (!connected && !state.open) {
       setState({ ...state, step: Steps.START, open: true });
@@ -63,10 +70,9 @@ export default function ConfirmationDialog() {
     const onClose = () => setState({ ...state, open: false });
     const next = () => setState({ ...state, step: state.step + 1 });
     if (state.step === Steps.CONNECT && state.consent && state.ip) {
-      //todo move to domain or api
       api.connect(state.ip, state.UID).then((d) => {
         if (d.length === 1 && d[0].error && d[0].error.type === 101) {
-          //@todo handle in UI
+          //@todo throw and handle in UI
           console.log("ALERT: press connect button! @todo");
         } else if (d.length > 0 && d[0].success && d[0].success.username) {
           initialize(state.ip, d[0].success.username, "hue-react#" + state.UID);
@@ -92,11 +98,13 @@ export default function ConfirmationDialog() {
   }
 
   const Content = () => {
+    //@todo move to separate component
     if (state.step === Steps.START) {
       return (
         <Typography>Press Continue to start the Connection Wizard.</Typography>
       );
     }
+    //@todo move to separate component
     if (state.step === Steps.CONSENT) {
       return (
         <>
@@ -118,6 +126,7 @@ export default function ConfirmationDialog() {
         </>
       );
     }
+    //@todo move to separate component
     if (state.step === Steps.BRIDGE) {
       return (
         <>
@@ -134,6 +143,7 @@ export default function ConfirmationDialog() {
         </>
       );
     }
+    //@todo move to separate component
     if (state.step === Steps.CONNECT) {
       return (
         <>

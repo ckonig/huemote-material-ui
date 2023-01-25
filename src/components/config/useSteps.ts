@@ -5,6 +5,7 @@ export const Steps = {
   CONNECT: 3,
 };
 
+//@todo move to ui
 export const getStepTitle = (step: number) => {
   if (step === Steps.START) {
     return "Setup";
