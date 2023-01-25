@@ -30,7 +30,7 @@ const useApi = () => {
         putJson(`${baseUrl}/groups/${id}/action`, action),
       //@todo this guy is different
       connect: (ip: string, uid: string) =>
-        fetch(`http://${ip}/api`, {
+        fetch(`https://${ip}/api`, {
           method: "post",
           body: JSON.stringify({ devicetype: "hue-react#" + uid }),
         }).then((d) => d.json()),
