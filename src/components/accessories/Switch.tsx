@@ -1,10 +1,10 @@
 import { Box, Card, CardActions, CardHeader, Icon } from "@mui/material";
 
 import Battery from "./Battery";
-import buttonEventToStr from "../helpers/buttonEventToStr";
-import { Switch as SwitchModel } from "../domain/models";
-import roomToFa from "../helpers/roomToFa";
-import useDiffToNow from "../helpers/useDiffToNow";
+import buttonEventToStr from "../../helpers/buttonEventToStr";
+import { Switch as SwitchModel } from "../../domain/models";
+import roomToFa from "../../helpers/roomToFa";
+import useDiffToNow from "../../helpers/useDiffToNow";
 import FooterChip from "./FooterChip";
 
 const Switch = ({ model }: { model: SwitchModel }) => {

@@ -1,8 +1,8 @@
 import { AccordionDetails } from "@mui/material";
 import Accordion from "./Accordion";
 import Room from "./Room";
-import { Room as RoomModel } from "../domain/models";
-import { useRooms } from "../domain/useRooms";
+import { Room as RoomModel } from "../../domain/models";
+import { useRooms } from "../../domain/useRooms";
 import { useState } from "react";
 import { RoomList } from "./RoomLayout";
 

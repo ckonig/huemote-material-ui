@@ -2,9 +2,9 @@ import { Box, Card, CardActions, CardHeader, Icon } from "@mui/material";
 
 import Battery from "./Battery";
 import FooterChip from "./FooterChip";
-import { Sensor as AbstractSensor } from "../domain/models";
-import roomToFa from "../helpers/roomToFa";
-import useDiffToNow from "../helpers/useDiffToNow";
+import { Sensor as AbstractSensor } from "../../domain/models";
+import roomToFa from "../../helpers/roomToFa";
+import useDiffToNow from "../../helpers/useDiffToNow";
 
 const Sensor = ({ model }: { model: AbstractSensor }) => {
   const diffToNow = useDiffToNow(model.presence.state?.lastupdated);

@@ -1,14 +1,14 @@
 import { AppBar, Box, Icon } from "@mui/material";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import Bridge from "./Bridge";
+import Bridge from "./config/Bridge";
 import Header from "./Header";
-import Lights from "./Lights";
+import Lights from "./control/Lights";
 import { useCallback, ChangeEvent } from "react";
-import Scenes from "./Scenes";
-import Sensors from "./Sensors";
+import Scenes from "./control/Scenes";
+import Sensors from "./accessories/Sensors";
 import SwipeableViews from "react-swipeable-views";
-import Switches from "./Switches";
+import Switches from "./accessories/Switches";
 import Tab from "@mui/material/Tab";
 import TabPanel from "./TabPanel";
 import Tabs from "@mui/material/Tabs";

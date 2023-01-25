@@ -1,6 +1,6 @@
 import { Switch, SwitchProps } from "@mui/material";
-import { Room } from "../domain/models";
-import useGroups from "../queries/useGroups";
+import { Room } from "../../domain/models";
+import useGroups from "../../queries/useGroups";
 
 interface RoomSwitchProps extends SwitchProps {
   room: Room;
@@ -9,6 +9,7 @@ const RoomSwitch = (props: RoomSwitchProps) => {
   const { toggle } = useGroups();
   return (
     <Switch
+      disabled
       checked={props.room.state.any_on}
       onClick={(e) => e.stopPropagation()}
       onChange={(e) => {

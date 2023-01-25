@@ -1,6 +1,6 @@
 import { Paper } from "@mui/material";
 import Switch from "./Switch";
-import { useSwitches } from "../domain/useSwitches";
+import { useSwitches } from "../../domain/useSwitches";
 
 const Switches = () => {
   const { switches } = useSwitches();

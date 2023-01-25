@@ -1,5 +1,5 @@
 import { Paper } from "@mui/material";
-import { useSensors } from "../domain/useSensors";
+import { useSensors } from "../../domain/useSensors";
 import Sensor from "./Sensor";
 
 const Sensors = () => {

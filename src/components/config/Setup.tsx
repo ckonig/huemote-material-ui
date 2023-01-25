@@ -6,11 +6,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { useCallback, useEffect, useState } from "react";
-import generateUID from "../helpers/generateUID";
+import generateUID from "../../helpers/generateUID";
 import { getStepTitle, Steps } from "./useSteps";
-import { useBridgeDiscovery } from "../queries/useBridgeDiscovery";
-import useConnection from "../queries/useConnection";
-import useApi from "../clip/v1/api";
+import { useBridgeDiscovery } from "../../queries/useBridgeDiscovery";
+import useConnection from "../../queries/useConnection";
+import useApi from "../../clip/v1/api";
 
 export default function ConfirmationDialog() {
   const { connected, initialize } = useConnection();

@@ -11,26 +11,26 @@ import React, { useMemo } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import ConfirmationDialog from "./components/Setup";
+import ConfirmationDialog from "./components/config/Setup";
 import TabNav from "./components/TabNav";
 
-
-declare module '@mui/styles/defaultTheme' {
+declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
-
 
 function App() {
   const queryClient = useMemo(() => new QueryClient(), []);
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(
     () =>
-      createTheme(adaptV4Theme({
-        palette: {
-          mode: prefersDarkMode ? "dark" : "light",
-        },
-      })),
+      createTheme(
+        adaptV4Theme({
+          palette: {
+            mode: prefersDarkMode ? "dark" : "light",
+          },
+        })
+      ),
     [prefersDarkMode]
   );
   return (

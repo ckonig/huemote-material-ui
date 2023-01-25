@@ -1,6 +1,6 @@
 import Scene from "./Scene";
 import Rooms from "./Rooms";
-import { Room } from "../domain/models";
+import { Room } from "../../domain/models";
 
 const Scenes = () => {
   return (

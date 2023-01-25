@@ -4,8 +4,8 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import { Box, Icon } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import useConfig from "../queries/useConfig";
-import useConnection from "../queries/useConnection";
+import useConfig from "../../queries/useConfig";
+import useConnection from "../../queries/useConnection";
 
 const Label = ({ children }: { children: React.ReactNode }) => {
   const style = {
