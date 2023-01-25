@@ -3,9 +3,9 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Bridge from "./config/Bridge";
 import Header from "./Header";
-import Lights from "./control/Lights";
+import Lights from "./control/lights/Lights";
 import { useCallback, ChangeEvent } from "react";
-import Scenes from "./control/Scenes";
+import Scenes from "./control/scenes/Scenes";
 import Sensors from "./accessories/Sensors";
 import SwipeableViews from "react-swipeable-views";
 import Switches from "./accessories/Switches";

@@ -1,6 +1,6 @@
 import { Slider } from "@mui/material";
-import { Light } from "../../domain/models";
-import useLights from "../../queries/useLights";
+import { Light } from "../../../domain/models";
+import useLights from "../../../queries/useLights";
 
 export const BrightnessSlider = ({ light }: { light: Light }) => {
   const { setBrightness } = useLights();

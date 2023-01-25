@@ -1,5 +1,5 @@
 import { ListItemIcon } from "@mui/material";
-import productToIcon from "../../helpers/productToIcon";
+import productToIcon from "../../../helpers/productToIcon";
 
 const ProductIcon = ({ productname }: { productname: string }) => {
   return (

@@ -1,7 +1,7 @@
 import { Box, Button, Divider, ListItemText } from "@mui/material";
-import { Scene as SceneModel } from "../../domain/models";
-import useScenes from "../../queries/useScenes";
-import { RoomListItem } from "./RoomLayout";
+import { Scene as SceneModel } from "../../../domain/models";
+import useScenes from "../../../queries/useScenes";
+import { RoomListItem } from "../RoomLayout";
 
 const Scene = ({ scene }: { scene: SceneModel }) => {
   const { activate } = useScenes();
