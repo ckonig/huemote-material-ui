@@ -27,7 +27,7 @@ const getClient = () => {
 const myFetch = async (url: string) => {
   const client = getClient();
   const response = await client.get(url);
-  if (response.status != 200) {
+  if (response.status !== 200) {
     throw new Error("Network response was not ok");
   }
   return response.data;
