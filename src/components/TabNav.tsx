@@ -12,6 +12,7 @@ import Switches from "./accessories/Switches";
 import Tab from "@mui/material/Tab";
 import TabPanel from "./TabPanel";
 import Tabs from "@mui/material/Tabs";
+import useConnection from "../queries/useConnection";
 
 const tabs = [
   { icon: "fa-photo-video", label: "Scenes", route: "/Scenes" },
@@ -22,6 +23,7 @@ const tabs = [
 ];
 
 function TabNav(props: RouteComponentProps<any>) {
+  const { connected } = useConnection();
   const getPathIndex = useCallback(() => {
     const found = tabs.findIndex((t) => t.route === props.location.pathname);
     return found > 0 ? found : 0;
@@ -36,6 +38,8 @@ function TabNav(props: RouteComponentProps<any>) {
     props.history.push(tabs[newValue].route);
     //@todo refresh
   };
+
+  if (!connected) return null;
 
   return (
     <Box

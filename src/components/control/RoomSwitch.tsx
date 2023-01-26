@@ -9,7 +9,7 @@ const RoomSwitch = (props: RoomSwitchProps) => {
   const { toggle } = useGroups();
   return (
     <Switch
-      disabled
+      disabled={props.disabled}
       checked={props.room.state.any_on}
       onClick={(e) => e.stopPropagation()}
       onChange={(e) => {

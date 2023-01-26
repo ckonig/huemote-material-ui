@@ -20,7 +20,7 @@ const Room = ({
           <Typography color={color}>{room.name}</Typography>
         </Box>
         <Box>
-          <RoomSwitch room={room} />
+          <RoomSwitch disabled={backgrounded} room={room} />
         </Box>
       </Grid>
     </AccordionSummary>
